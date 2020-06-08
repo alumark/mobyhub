@@ -17,7 +17,18 @@
 local player = game.Players.LocalPlayer
 local Library = loadstring(game:HttpGet("https://pastebin.com/raw/AtQAJECZ", true))()
 
+function fastSpawn(func, ...)
+	assert(type(func) == "function")
 
+	local args = {...}
+	local bindable = Instance.new("BindableEvent")
+	bindable.Event:Connect(function()
+		func(unpack(args))
+	end)
+
+	bindable:Fire()
+	bindable:Destroy()
+end
 
 local Game = {}
 Game.__index = Game
@@ -97,7 +108,7 @@ do
             local window = Library:CreateWindow("The Streets")
             window:Section("Bypass")
             window:Button("Anti-Cheat Bypass", function()
-                loadstring([[ 
+                loadstring([[
                     print("enabling bypass")
 
                     local mt = getrawmetatable(game)
@@ -110,7 +121,7 @@ do
                         make_writable(mt)
                     end
 
-                    mt.__newindex = newcclosure(function(self, index value)
+                    mt.__newindex = newcclosure(function(self, index, value)
                         if not checkcaller() then
                             if self:IsA("Humanoid") then
                                 game:GetService('StarterGui'):SetCore('ResetButtonCallback', true)
