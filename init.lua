@@ -15,7 +15,8 @@
 --]]
 
 local player = game.Players.LocalPlayer
-local Library = loadstring(game:HttpGet("https://pastebin.com/raw/eWKgbdix", true))()
+local Library = loadstring(game:HttpGet("https://pastebin.com/raw/AtQAJECZ", true))()
+
 
 
 local Game = {}
@@ -91,7 +92,7 @@ do
 	do
 		hub:AddGame(THE_STREETS, {455366377, 4669040})
         hub.games[THE_STREETS].InitializeUI = function(self)
-            self.speed = 24
+            self.speed = 32
 
             local window = Library:Window("The Streets")
             window:Section("Bypass")
@@ -167,8 +168,21 @@ do
                 end)
             end)
 
+            local slider = window:Slider("Sprint Speed", {
+                min = 24,
+                max = 128,
+                flag = "speed"
+            }, function(v)
+                self.speed = v
+            end)
 
+            local resetSprint = window:Button("Reset Sprint Speed", function()
+                slider:Set(old)
+            end)
         end
-	end
+    end
+    
+    hub:OpenPlace(game.PlaceId)
+    hub:OpenPlace(0)
 end
  
