@@ -144,15 +144,15 @@ do
                         local args = {...}
                         if not checkcaller() then
                             if getnamecallmethod() == "Destroy" and self:IsA("BodyMover") then
-                                return fuckyou(self, ...)
+                                return error(self, ...)
                             end
 
                             if getnamecallmethod() and self.Name == game.Players.LocalPlayer.Character.Name then
-                                return fuckyou(self, ...)
+                                return error(self, ...)
                             end
 
                             if getnamecallmethod() == "FireServer" then
-                                if self.Name == "lIII" or self.Parent:IsDescendantOf("ReplicatedStorage") then
+                                if self.Name == "lIII" and self:IsDescendantOf(game.ReplicatedStorage) then
                                     return wait(9e9)
                                 end
 
