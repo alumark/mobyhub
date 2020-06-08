@@ -94,7 +94,7 @@ do
         hub.games[THE_STREETS].InitializeUI = function(self)
             self.speed = 32
 
-            local window = Library:Window("The Streets")
+            local window = Library:CreateWindow("The Streets")
             window:Section("Bypass")
             window:Button("Anti-Cheat Bypass", function()
                 loadstring([[ 
