@@ -182,7 +182,7 @@ do
         end
     end
     
-    hub:OpenPlace(game.PlaceId)
-    hub:OpenPlace(0)
+    hub:OpenGame(game.PlaceId)
+    hub:OpenGame(0)
 end
  
