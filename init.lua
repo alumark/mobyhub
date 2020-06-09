@@ -198,7 +198,7 @@ do
             window:Button("Anti-Cheat Bypass", function()
                 fastSpawn(function()
                     local mt = getrawmetatable(game)
-                    local newcclosure, checkcaller = hide_me or newcclosure, checkcaller or is_protosmasher_caller or Cer.isCerus
+                    local closure, caller = hide_me or newcclosure, checkcaller or is_protosmasher_caller or Cer.isCerus
                     local mt_namecall, mt_newindex = mt.__namecall, mt.__newindex
 
                     if setreadonly then
@@ -207,8 +207,8 @@ do
                         make_writeable(mt)
                     end
 
-                    mt.__newindex = newcclosure(function(self, index, value)
-                        if not checkcaller() then
+                    mt.__newindex = closure(function(self, index, value)
+                        if not caller() then
                             if self:IsA('Humanoid') then
                                 game:GetService('StarterGui'):SetCore('ResetButtonCallback', true)
 
@@ -229,16 +229,16 @@ do
                         return mt_newindex(self, index, value)
                     end)
 
-                    mt.__namecall = newcclosure(function(self, ...)
-                        if not checkcaller() then
+                    mt.__namecall = closure(function(self, ...)
+                        if not caller() then
                             local args = {...}
 
                             if getnamecallmethod() == "Destroy" and self:IsA("BodyMover") then
-                                return invalidfunctiongang(self, ...)
+                                return fuckyou(self, ...)
                             end
 
                             if getnamecallmethod() == "BreakJoints" and self.Name == player.Character.Name then
-                                return invalidfunctiongang(self, ...)
+                                return fuckyou(self, ...)
                             end
 
                             if getnamecallmethod() == "FireServer" then
