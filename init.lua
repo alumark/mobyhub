@@ -184,7 +184,24 @@ do
             end)
 
             local resetSprint = window:Button("Reset Sprint Speed", function()
-                slider:Set(old)
+                slider:Set(24)
+            end)
+
+            local godMode = window:Toggle("God", {flag = "god"}, function(value)
+                if value then
+                    if not self.godConn then
+                        self.godConn = game:GetService("RunService").Stepped:Connect(function()
+                            hum.Health = 0
+                            for _, v in pairs(player.Character:GetChildren()) do
+                                if v.Name == "Right Leg" then
+                                    v:Destroy()
+                                end
+                            end
+                        end)
+                    end
+                else
+                    self.godConn = self.godConn:Disconnect()
+                end
             end)
         end
     end
