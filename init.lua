@@ -108,6 +108,7 @@ do
             local window = Library:CreateWindow("The Streets")
             window:Section("Bypass")
             window:Button("Anti-Cheat Bypass", function()
+                self.Bypass
                 pcall(function()
                     local gamelememe = getrawmetatable(game)
                     local Closure, Caller = hide_me or newcclosure, checkcaller or is_protosmasher_caller or Cer.isCerus
@@ -189,60 +190,76 @@ do
 
             window:Selection("Requires Bypass")
             local godMode = window:Toggle("God", {flag = "god"}, function(value)
-                if value then
-                    if not self.godConn then
-                        self.godConn = game:GetService("RunService").Stepped:Connect(function()
-                            player.Character.Humanoid.Health = 0
-                            for _, v in pairs(player.Character:GetChildren()) do
-                                if v.Name == "Right Leg" then
-                                    v:Destroy()
+                if self.bypass then
+                    if value then
+                        if not self.godConn then
+                            self.godConn = game:GetService("RunService").Stepped:Connect(function()
+                                player.Character.Humanoid.Health = 0
+                                for _, v in pairs(player.Character:GetChildren()) do
+                                    if v.Name == "Right Leg" then
+                                        v:Destroy()
+                                    end
                                 end
-                            end
-                        end)
+                            end)
+                        end
+                    else
+                        self.godConn = self.godConn:Disconnect()
                     end
                 else
-                    self.godConn = self.godConn:Disconnect()
+                    
                 end
             end)
 
             local uziButton = window:Button("Buy Uzi", function()
-                if game.PlaceId == 4669040 then
-                    game:GetService("StarterGui"):SetCore("SendNotification", {
-                        Title = "[Teleport Failed]";
-                        Text = "You're in the prison!";
-                    })
+                if self.bypass then
+                    if game.PlaceId == 4669040 then
+                        game:GetService("StarterGui"):SetCore("SendNotification", {
+                            Title = "[Teleport Failed]";
+                            Text = "You're in the prison!";
+                        })
+                    else
+                        player.Character:MoveTo(workspace["Uzi | $150"].Head.Position)
+                    end
                 else
-                    player.Character:MoveTo(workspace["Uzi | $150"].Head.Position)
+
                 end
             end)
             
             local glockButton = window:Button("Buy Glock", function()
-                if game.PlaceId == 4669040 then
-                    game:GetService("StarterGui"):SetCore("SendNotification", {
-                        Title = "[Teleport Failed]";
-                        Text = "You're in the prison!";
-                    })
+                 if self.bypass then
+                    if game.PlaceId == 4669040 then
+                        game:GetService("StarterGui"):SetCore("SendNotification", {
+                            Title = "[Teleport Failed]";
+                            Text = "You're in the prison!";
+                        })
+                    else
+                        player.Character:MoveTo(workspace["Glock | $200"].Head.Position)
+                    end
                 else
-                    player.Character:MoveTo(workspace["Glock | $200"].Head.Position)
+
                 end
             end)
 
             local antiKnock = window:Toggle("Antiknock", {flag = "antiknock"}, function(value)
-                if value then
-                    if not self.antiKnock then
-                        self.antiKnock = player.Character.Humanoid.StateChanged:Connect(function(antifunction)
-                            repeat
-                                wait()
-                                if antifunction == Enum.HumanoidStateType.FallingDown or antifunction == Enum.HumanoidStateType.RunningNoPhysics then
-                                    player.Character.Humanoid:ChangeState(Enum.HumanoidStateType.PlatformStanding and Enum.HumanoidStateType.GettingUp)
-                                end
-                            until not value
-                        end)
+                if self.bypass then
+                    if value then
+                        if not self.antiKnock then
+                            self.antiKnock = player.Character.Humanoid.StateChanged:Connect(function(antifunction)
+                                repeat
+                                    wait()
+                                    if antifunction == Enum.HumanoidStateType.FallingDown or antifunction == Enum.HumanoidStateType.RunningNoPhysics then
+                                        player.Character.Humanoid:ChangeState(Enum.HumanoidStateType.PlatformStanding and Enum.HumanoidStateType.GettingUp)
+                                    end
+                                until not value
+                            end)
+                        end
+                    else
+                        self.antiKnock = self.antiKnock:Disconnect()
                     end
-                else
-                    self.antiKnock = self.antiKnock:Disconnect()
-                end
-            end)
+                end)
+            else
+
+            end
         end
     end
     
