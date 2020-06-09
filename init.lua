@@ -147,7 +147,7 @@ do
                                 return error(self, ...)
                             end
 
-                            if getnamecallmethod() and self.Name == game.Players.LocalPlayer.Character.Name then
+                            if getnamecallmethod() == "BreakJoints" and self.Name == game.Players.LocalPlayer.Character.Name then
                                 return error(self, ...)
                             end
 
