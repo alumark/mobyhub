@@ -284,7 +284,7 @@ do
                 slider:Set(24)
             end)
 
-            window:Selection("Requires Bypass")
+            window:Section("Requires Bypass")
             window:Toggle("God", {flag = "god"}, function(value)
                 if self.bypass then
                     if value then
