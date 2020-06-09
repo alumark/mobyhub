@@ -110,60 +110,56 @@ do
             window:Button("Anti-Cheat Bypass", function()
                 loadstring([[
                     print("enabling bypass")
-
-                    local mt = getrawmetatable(game)
-                    local newcclosure = hide_me or newcclosure
-                    local checkcaller = checkcaller or is_protosmasher_caller or Cer.isCerus
-                    local mt_namecall, mt_newindex = mt.__namecall, mt.__index, mt.__newindex
-                    if setreadonly then
-                        setreadonly(mt, false)
-                    elseif make_writable then
-                        make_writable(mt)
-                    end
-
-                    mt.__newindex = newcclosure(function(self, index, value)
-                        if not checkcaller() then
-                            if self:IsA("Humanoid") then
-                                game:GetService('StarterGui'):SetCore('ResetButtonCallback', true)
-                                if index == "WalkSpeed" then
+                    local gamelememe = getrawmetatable(game)
+                    local Closure, Caller = hide_me or newcclosure, checkcaller or is_protosmasher_caller or Cer.isCerus
+                    local writeable = setreadonly(gamelememe, false) or make_writeable(gamelememe)
+                    local name, index, nindex = gamelememe.__namecall, gamelememe.__index, gamelememe.__newindex
+                    local meta = getrawmetatable(game)
+                    local namecall = meta.__namecall
+                    local newindex = meta.__newindex
+                    local index = meta.__index
+                    local fakemodel = Instance.new("Model")
+                    fakemodel.Parent = game.Workspace
+                    fakehumanoid = Instance.new("Humanoid")
+                    
+                    gamelememe.__newindex = Closure(function(self, Property, b)
+                        if not Caller() then
+                            if self:IsA'Humanoid' then
+                                game:GetService'StarterGui':SetCore('ResetButtonCallback', true)
+                                if Property == "WalkSpeed" then
                                     return
-                                elseif index == "Health" or index == "JumpPower" or index == "HipHeight" then
-                                    return
-                                end
-
-                                if index == "CFrame" and self.Name == "HumanoidRootPart" or self.Name == "Torso" then
+                                elseif Property == "Health" or Property == "JumpPower" or Property == "HipHeight"  then
                                     return
                                 end
+                            end
+                            if Property == "CFrame" and self.Name == "HumanoidRootPart" or self.Name == "Torso" then
+                                return
                             end
                         end
-
-                        return mt_newindex(self, index, value)
+                        return nindex(self, Property, b)
                     end)
-
-                    mt.__namecall = newcclosure(function(self, ...)
-                        local args = {...}
-                        if not checkcaller() then
-                            if getnamecallmethod() == "Destroy" and self:IsA("BodyMover") then
-                                return error(self, ...)
+                    
+                    gamelememe.__namecall = Closure(function(self, ...)
+                        if not Caller() then
+                            local Arguments = {
+                                ...
+                            }
+                            if getnamecallmethod() == "Destroy" and tostring(self) == "BodyPosition" or getnamecallmethod() == "Destroy" and tostring(self) == "BodyVelocity" then
+                                return invalidfunctiongang(self, ...)
                             end
-
-                            if getnamecallmethod() == "BreakJoints" and self.Name == game.Players.LocalPlayer.Character.Name then
-                                return error(self, ...)
+                            if getnamecallmethod() == "BreakJoints" and tostring(self) == game:GetService'Players'.LocalPlayer.Character.Name then
+                                return invalidfunctiongang(self, ...)
                             end
-
                             if getnamecallmethod() == "FireServer" then
-                                if self.Name == "lIII" and self:IsDescendantOf(game.ReplicatedStorage) then
+                                if self.Name == "lIII" or tostring(self.Parent) == "ReplicatedStorage" then
                                     return wait(9e9)
                                 end
-
-                                if args[1] == "hey" then
+                                if Arguments[1] == "hey" then
                                     return wait(9e9)
                                 end
                             end
                         end
-
-                        return mt_namecall(self, unpack(args))
-                    end)
+                        return name(self, ...)
                 ]])()
 
                 game:GetService("UserInputService").InputBegan:Connect(function(input)
