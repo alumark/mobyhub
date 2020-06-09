@@ -203,12 +203,12 @@ do
 
                     if setreadonly then
                         setreadonly(mt, false)
-                    elseif makewriteable then
+                    elseif make_writeable then
                         make_writeable(mt)
                     end
 
                     mt.__newindex = newcclosure(function(self, index, value)
-                        if not newcclosure() then
+                        if not checkcaller() then
                             if self:IsA('Humanoid') then
                                 game:GetService('StarterGui'):SetCore('ResetButtonCallback', true)
 
