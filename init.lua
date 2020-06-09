@@ -289,6 +289,15 @@ do
             end)
         end
     end
+
+    local SHARK_BITE = "Sharkbite"
+    do
+        hub:AddGame(SHARK_BITE, {734159876})
+        hub.games[SHARK_BITE].InitializeUI = function(self)
+            local window = Library:Window("Sharkbite")
+            window:Section()
+        end
+    end
     
     hub:OpenGame(game.PlaceId)
     hub:OpenGame(0)
