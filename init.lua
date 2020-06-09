@@ -247,12 +247,6 @@ do
                                     return wait(9e9)
                                 end
                             end
-
-                            if getnamecallmethod() == "SetState" and self:IsA("Humanoid") then
-                                if args[1] == Enum.HumanoidStateType.FallingDown or args[1] == Enum.HumanoidStateType.RunningNoPhysics then
-                                    return
-                                end
-                            end
                         end
 
                         return mt_namecall(self, ...)
