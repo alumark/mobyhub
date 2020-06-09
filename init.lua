@@ -18,8 +18,12 @@ repeat
     wait(5)
 until game:IsLoaded()
 
+local players = game:GetService("Players");
+local runService = game:GetService("RunService");
+
 local player = game.Players.LocalPlayer
 local Library = loadstring(game:HttpGet("https://pastebin.com/raw/AtQAJECZ", true))()
+local OwlESP = loadstring(game:HttpGetAsync("https://raw.githubusercontent.com/CriShoux/OwlHub/master/scripts/OwlESP.lua"))();
 
 function fastSpawn(func, ...)
 	assert(type(func) == "function")
@@ -103,6 +107,86 @@ end
 
 local hub = Hub.new()
 do
+    local UNIVERSAL = "Universal"
+    do
+        hub:AddGame(UNIVERSAL, {0})
+        hub.games[UNIVERSAL].InitializeUI = function(self)
+            self.espEnabled = false
+            self.tracersEnabled = false
+
+            local tracking = {};
+
+            local remove = table.remove;
+            local fromRGB = Color3.fromRGB;
+
+            local espColor = fromRGB(255, 255, 255);
+            local teamCheck = true;
+
+            local function characterRemoving(char)
+                for i, v in next, tracking do
+                    if v.char == char then
+                        v:remove();
+                        remove(tracking, i);
+                    end;
+                end;
+            end;
+
+            local function characterAdded(plr)
+                local char = plr.Character;
+                char:WaitForChild("HumanoidRootPart"); 
+                char:WaitForChild("Head");
+                tracking[#tracking + 1] = OwlESP.new({
+                    plr = plr,
+                    espBoxVisible = self.espEnabled,
+                    tracerVisible = self.tracersEnabled,
+                    text = plr.Name,
+                    teamCheck = teamCheck,
+                    espColor = espColor
+                });
+            end;
+
+            local function playerAdded(plr)
+                local char = plr.Character;
+                if char then
+                    characterAdded(plr)
+                end;
+                plr.CharacterAdded:Connect(function()
+                    characterAdded(plr);
+                end);
+                plr.CharacterRemoving:Connect(characterRemoving);
+            end;
+
+            players.PlayerAdded:Connect(playerAdded);
+
+            runService.RenderStepped:Connect(function()
+                for _, v in ipairs(tracking) do
+                    v:update();
+                end;
+            end);
+
+
+            local window = Library:CreateWindow("Universal")
+            window:Section("Render")
+            window:Toggle("ESP", {
+                flag = "esp"
+            }, function(enable)
+                self.espEnabled = enable
+                for _, plr in ipairs(players:GetPlayers()) do
+                    playerAdded(plr)
+                end;
+            end)
+
+            window:Toggle("Tracers", {
+                flag = "tracers"
+            }, function(enable)
+                self.tracersEnabled = enable
+                for _, plr in ipairs(players:GetPlayers()) do
+                    playerAdded(plr)
+                end;
+            end)
+        end
+    end
+
 	local THE_STREETS = "The Streets"
 	do
 		hub:AddGame(THE_STREETS, {455366377, 4669040})
