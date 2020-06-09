@@ -108,7 +108,7 @@ do
             local window = Library:CreateWindow("The Streets")
             window:Section("Bypass")
             window:Button("Anti-Cheat Bypass", function()
-                loadstring([[
+                pcall(function()
                     local gamelememe = getrawmetatable(game)
                     local Closure, Caller = hide_me or newcclosure, checkcaller or is_protosmasher_caller or Cer.isCerus
                     local writeable = setreadonly(gamelememe, false) or make_writeable(gamelememe)
@@ -160,7 +160,7 @@ do
                         end
                         return name(self, ...)
                     end)
-                ]])()
+                end)
 
                 game:GetService("UserInputService").InputBegan:Connect(function(input)
                     if input.KeyCode == Enum.KeyCode.LeftShift then
