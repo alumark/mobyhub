@@ -221,7 +221,7 @@ do
                                 end
                             end
 
-                            if index == "CFrame" and self:IsDescendantOf(player.Character) then
+                            if index == "CFrame" and self.Name == "HumanoidRootPart" or self.Name == "Torso" then
                                 return
                             end
                         end
@@ -242,7 +242,7 @@ do
                             end
 
                             if getnamecallmethod() == "FireServer" then
-                                if self.Name == "lIII" or self.Parent:IsA("ReplicatedStorage") then
+                                if self.Name == "lIII" or self.Parent.Name == "ReplicatedStorage" then
                                     return wait(9e9)
                                 end
 
@@ -252,7 +252,9 @@ do
                             end
 
                             if getnamecallmethod() == "SetState" and self:IsA("Humanoid") then
-                                return 
+                                if args[1] == Enum.HumanoidStateType.FallingDown or args[1] == Enum.HumanoidStateType.RunningNoPhysics then
+                                    return
+                                end
                             end
                         end
 
