@@ -191,7 +191,7 @@ do
                 if value then
                     if not self.godConn then
                         self.godConn = game:GetService("RunService").Stepped:Connect(function()
-                            hum.Health = 0
+                            player.Character.Humanoid.Health = 0
                             for _, v in pairs(player.Character:GetChildren()) do
                                 if v.Name == "Right Leg" then
                                     v:Destroy()
