@@ -14,6 +14,10 @@
                                    \______/             
 --]]
 
+repeat 
+    wait(5)
+until game:IsLoaded()
+
 local player = game.Players.LocalPlayer
 local Library = loadstring(game:HttpGet("https://pastebin.com/raw/AtQAJECZ", true))()
 
@@ -111,7 +115,7 @@ do
                 fastSpawn(function()
                     local mt = getrawmetatable(game)
                     local newcclosure, checkcaller = hide_me or newcclosure, checkcaller or is_protosmasher_caller or Cer.isCerus
-                    local mt_namecall, mt_index, mt_newindex = mt.__namecall, mt.__index, mt.__newindex
+                    local mt_namecall, mt_newindex = mt.__namecall, mt.__newindex
 
                     if setreadonly then
                         setreadonly(mt, false)
@@ -199,12 +203,12 @@ do
                 self.speed = v
             end)
 
-            local resetSprint = window:Button("Reset Sprint Speed", function()
+            window:Button("Reset Sprint Speed", function()
                 slider:Set(24)
             end)
 
             window:Selection("Requires Bypass")
-            local godMode = window:Toggle("God", {flag = "god"}, function(value)
+            window:Toggle("God", {flag = "god"}, function(value)
                 if self.bypass then
                     if value then
                         if not self.godConn then
@@ -228,7 +232,7 @@ do
                 end
             end)
 
-            local uziButton = window:Button("Buy Uzi", function()
+            window:Button("Buy Uzi", function()
                 if self.bypass then
                     if game.PlaceId == 4669040 then
                         game:GetService("StarterGui"):SetCore("SendNotification", {
@@ -246,7 +250,7 @@ do
                 end
             end)
             
-            local glockButton = window:Button("Buy Glock", function()
+            window:Button("Buy Glock", function()
                  if self.bypass then
                     if game.PlaceId == 4669040 then
                         game:GetService("StarterGui"):SetCore("SendNotification", {
@@ -264,7 +268,7 @@ do
                 end
             end)
 
-            local antiKnock = window:Toggle("Antiknock", {flag = "antiknock"}, function(value)
+            window:Toggle("Antiknock", {flag = "antiknock"}, function(value)
                 if self.bypass then
                     if value then
                         if not self.antiKnock then
@@ -294,8 +298,205 @@ do
     do
         hub:AddGame(SHARK_BITE, {734159876})
         hub.games[SHARK_BITE].InitializeUI = function(self)
+            self.flySpeed = 100
+
             local window = Library:Window("Sharkbite")
-            window:Section()
+
+            -- Shark Commands
+            window:Section("Shark Commands")
+            window:Toggle("Fly as Shark", {flag = "sharkFly"}, function(enabled)
+                self.flyEnabled = enabled
+
+                repeat
+                    wait()
+                until game:IsLoaded()
+
+                local mouse = game.Players.LocalPlayer:GetMouse()
+
+                repeat 
+                    wait() 
+                until mouse
+                local bv, bg
+                
+                while self.flyEnabled do 
+                    wait()
+
+                    local body = workspace.Sharks:FindFirstChild("Shark" .. game.Players.LocalPlayer.Name)
+                    if body then
+                        local torso = body.Body
+                
+                        for _, move in next, body:GetChildren() do 
+                            if move:IsA("BodyMover") then
+                                move:Destroy() 
+                            end
+                        end
+
+                        if not bv then
+                            bv = Instance.new("BodyVelocity")
+                            bv.maxForce = Vector3.new(9e9, 9e9, 9e9)
+                            bv.Parent = torso
+                        end
+                        
+                        if not bg then
+                            bg = Instance.new("BodyGyro")
+                            bg.P = 9e4
+                            bg.maxTorque = Vector3.new(9e9, 9e9, 9e9)
+                            bg.Parent = torso
+                        end
+
+                        bg.CFrame = mouse.Hit
+                        torso.Velocity = mouse.Hit.LookVector * self.flySpeed
+                    end
+                end
+            end)
+
+            window:Slider("Fly Speed", {
+                min = 100,
+                max = 1000,
+                flags = "flySpeed"
+            }, function(speed)
+                self.flySpeed = speed
+            end)
+            
+            -- Human Commands
+            window:Section("Human Commands")
+            window:Button("Rapidfire Laser Gun [Hold Gun]", function()
+               loadstring([[
+                    local weapon = game.Players.LocalPlayer.Character:FindFirstChildOfClass("Tool")
+                    weapon:FindFirstChildOfClass("LocalScript"):Destroy()
+                    script.Parent = weapon
+                    
+                    local l__RenderStepped__1 = game:GetService("RunService").RenderStepped;
+                    local l__LocalPlayer__2 = game.Players.LocalPlayer;
+                    local l__mouse__3 = l__LocalPlayer__2:GetMouse();
+                    local u1 = false;
+                    local u2 = nil;
+                    local l__WeaponDisplay__3 = script.Parent:WaitForChild("WeaponDisplay");
+                    local u4 = 10;
+                    local u5 = false;
+                    local u6 = nil;
+                    local u7 = nil;
+                    script.Parent.Equipped:connect(function()
+                        u1 = true;
+                        u2 = l__WeaponDisplay__3:Clone();
+                        u2.Parent = game.Players.LocalPlayer.PlayerGui;
+                        u2.Frame.Ammo.Text = u4 .. " / " .. 10;
+                        game:GetService("UserInputService").InputBegan:connect(function(p1)
+                            if p1.KeyCode == Enum.KeyCode.ButtonX then
+                                reload();
+                            end;
+                        end);
+                        u6 = script.Parent.Parent.Humanoid:LoadAnimation(script.Parent.Idle);
+                        u7 = script.Parent.Parent.Humanoid:LoadAnimation(script.Parent.Shoot);
+                        u6:Play();
+                    end);
+                    local u8 = false;
+                    local u9 = false;
+                    script.Parent.Unequipped:connect(function()
+                        u1 = false;
+                        u8 = false;
+                        u9 = false;
+                        local l__WeaponDisplay__4 = game.Players.LocalPlayer.PlayerGui:FindFirstChild("WeaponDisplay");
+                        if l__WeaponDisplay__4 then
+                            l__WeaponDisplay__4:Destroy();
+                        end;
+                        u6:Stop();
+                        u7:Stop();
+                        game:GetService("ContextActionService"):UnbindAction("Reload");
+                    end);
+                    game.Players.LocalPlayer.Character.Humanoid.Died:connect(function()
+                        local l__WeaponDisplay__5 = game.Players.LocalPlayer.PlayerGui:FindFirstChild("WeaponDisplay");
+                        if l__WeaponDisplay__5 then
+                            l__WeaponDisplay__5:Destroy();
+                        end;
+                    end);
+                    l__mouse__3.Button1Down:connect(function()
+                        fireWeapon();
+                    end);
+                    local l__Projectiles__10 = game.Workspace.Events.Projectiles;
+                    local u11 = 0;
+                    function fireWeapon()
+                        local v6 = script.Parent.Handle.FireSound:Clone();
+                        v6.Parent = script.Parent.Handle;
+                        v6:Destroy();
+                        game.Workspace.Events.Projectiles.GunSound:FireServer(script.Parent.Handle);
+                        u7:Play();
+                                local v7 = l__mouse__3.Hit;
+                                if u5 then
+                                    local l__AbsolutePosition__8 = u2.MobileAim.AbsolutePosition;
+                                    local l__AbsoluteSize__9 = u2.MobileAim.AbsoluteSize;
+                                    local l__Magnitude__10 = (l__LocalPlayer__2.Character.Head.Position - game.Workspace.CurrentCamera.CFrame.p).Magnitude;
+                                    local v11 = game.Workspace.CurrentCamera:ScreenPointToRay(l__AbsolutePosition__8.X + l__AbsoluteSize__9.X / 2, l__AbsolutePosition__8.Y + l__AbsoluteSize__9.Y / 2, 0);
+                                    local v12, v13 = game.Workspace:FindPartOnRay(Ray.new(v11.Origin, v11.Direction * 10000), l__LocalPlayer__2.Character);
+                                    v7 = CFrame.new(v13);
+                                end;
+                                local l__Position__14 = script.Parent.Handle.Position;
+                                local l__lookVector__15 = CFrame.new(l__Position__14, v7.p).lookVector;
+                                l__Projectiles__10.ProjectileRenderEvent:FireServer(0, l__LocalPlayer__2.Name, 1, l__Position__14, v7, 10000, 10000);
+                                coroutine.wrap(function()
+                                    local v16 = game.ReplicatedStorage.ProjectileRayGun:Clone();
+                                    v16.Parent = game.Workspace;
+                                    local v17 = 0;
+                                    local v18 = l__Position__14;
+                                    local v19 = 2;
+                                    while true do
+                                        if v17 < 700 then
+                    
+                                        else
+                                            break;
+                                        end;
+                                        local v20, v21 = game.Workspace:FindPartOnRay(Ray.new(v18, l__lookVector__15.unit * v19), game.Players.LocalPlayer.Character, true, true);
+                                        v18 = v21;
+                                        if not v20 then
+                    
+                                        else
+                                            local l__Body__22 = v20.Parent:FindFirstChild("Body");
+                                            if l__Body__22 then
+                                                l__Projectiles__10.HealthChange:FireServer(l__Body__22.Parent.OwnerName.Value, 20, u11);
+                                            end;
+                                            local l__Body__23 = v20.Parent.Parent:FindFirstChild("Body");
+                                            if l__Body__23 then
+                                                l__Projectiles__10.HealthChange:FireServer(l__Body__23.Parent.OwnerName.Value, 20, u11);
+                                            end;
+                                            l__Projectiles__10.ProjectileRenderEvent:FireServer(1, l__LocalPlayer__2.Name, 1, l__Position__14, v7, 20, 700);
+                                            break;
+                                        end;
+                                        v16.CFrame = CFrame.new(v18, v18 + l__lookVector__15);
+                                        if v19 * 2 < 20 then
+                                            v19 = v19 * 2;
+                                        elseif v19 ~= 20 then
+                                            v19 = 20;
+                                        end;
+                                        v17 = v17 + v19;
+                                        l__RenderStepped__1:wait();							
+                                    end;
+                                    v16:Destroy();
+                                end)();
+                        wait(0.1);
+                        u7:Stop();
+                    end;
+                    function reload()
+                        if u9 then
+                            return;
+                        end;
+                        u9 = true;
+                        u8 = false;
+                        script.Parent.Handle.ReloadSound:Play();
+                        wait(2.2);
+                        if not u1 then
+                            return;
+                        end;
+                        u4 = 10;
+                        u2.Frame.Ammo.Text = u4 .. " / " .. 10;
+                        u2.Frame.ReloadReminder.Visible = false;
+                        u9 = false;
+                    end;
+                    game.Workspace.Events.S.SEvent.OnClientEvent:connect(function(p2)
+                        u11 = p2;
+                    end);
+                ]])();
+            end)
+            
         end
     end
     
