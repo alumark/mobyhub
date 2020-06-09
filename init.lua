@@ -103,75 +103,90 @@ do
 	do
 		hub:AddGame(THE_STREETS, {455366377, 4669040})
         hub.games[THE_STREETS].InitializeUI = function(self)
-            self.speed = 32
+            self.speed = 24
 
             local window = Library:CreateWindow("The Streets")
             window:Section("Bypass")
             window:Button("Anti-Cheat Bypass", function()
-                self.Bypass
-                pcall(function()
-                    local gamelememe = getrawmetatable(game)
-                    local Closure, Caller = hide_me or newcclosure, checkcaller or is_protosmasher_caller or Cer.isCerus
-                    local writeable = setreadonly(gamelememe, false) or make_writeable(gamelememe)
-                    local name, index, nindex = gamelememe.__namecall, gamelememe.__index, gamelememe.__newindex
-                    local meta = getrawmetatable(game)
-                    local namecall = meta.__namecall
-                    local newindex = meta.__newindex
-                    local index = meta.__index
-                    local fakemodel = Instance.new("Model")
-                    fakemodel.Parent = game.Workspace
-                    fakehumanoid = Instance.new("Humanoid")
+                fastSpawn(function()
+                    local mt = getrawmetatable(game)
+                    local newcclosure, checkcaller = hide_me or newcclosure, checkcaller or is_protosmasher_caller or Cer.isCerus
+                    local mt_namecall, mt_index, mt_newindex = mt.__namecall, mt.__index, mt.__newindex
 
-                    gamelememe.__newindex = Closure(function(self, Property, b)
-                        if not Caller() then
-                            if self:IsA'Humanoid' then
-                                game:GetService'StarterGui':SetCore('ResetButtonCallback', true)
-                                if Property == "WalkSpeed" then
+                    if setreadonly then
+                        setreadonly(mt, false)
+                    elseif makewriteable then
+                        make_writeable(mt)
+                    end
+
+                    mt.__newindex = newcclosure(function(self, index, value)
+                        if not newcclosure() then
+                            if self:IsA('Humanoid') then
+                                game:GetService('StarterGui'):SetCore('ResetButtonCallback', true)
+
+                                if index == "WalkSpeed" then
                                     return
-                                elseif Property == "Health" or Property == "JumpPower" or Property == "HipHeight"  then
+                                end
+
+                                if index == "Health" or index == "JumpPower" or index == "HipHeight" then
                                     return
                                 end
                             end
-                            if Property == "CFrame" and self.Name == "HumanoidRootPart" or self.Name == "Torso" then
+
+                            if index == "CFrame" and self:IsDescendantOf(player.Character) then
                                 return
                             end
                         end
-                        return nindex(self, Property, b)
+
+                        return mt_newindex(self, index, value)
                     end)
 
-                    gamelememe.__namecall = Closure(function(self, ...)
-                        if not Caller() then
-                            local Arguments = {
-                                ...
-                            }
-                            if getnamecallmethod() == "Destroy" and tostring(self) == "BodyPosition" or getnamecallmethod() == "Destroy" and tostring(self) == "BodyVelocity" then
+                    mt.__namecall = newcclosure(function(self, ...)
+                        if not checkcaller() then
+                            local args = {...}
+
+                            if getnamecallmethod() == "Destroy" and self:IsA("BodyMover") then
                                 return invalidfunctiongang(self, ...)
                             end
-                            if getnamecallmethod() == "BreakJoints" and tostring(self) == game:GetService'Players'.LocalPlayer.Character.Name then
+
+                            if getnamecallmethod() == "BreakJoints" and self.Name == player.Character.Name then
                                 return invalidfunctiongang(self, ...)
                             end
+
                             if getnamecallmethod() == "FireServer" then
-                                if self.Name == "lIII" or tostring(self.Parent) == "ReplicatedStorage" then
+                                if self.Name == "lIII" or self.Parent:IsA("ReplicatedStorage") then
                                     return wait(9e9)
                                 end
-                                if Arguments[1] == "hey" then
+
+                                if args[1] == "hey" then
                                     return wait(9e9)
                                 end
+                            end
+
+                            if getnamecallmethod() == "SetState" and self:IsA("Humanoid") then
+                                return 
                             end
                         end
-                        return name(self, ...)
+
+                        return mt_namecall(self, ...)
                     end)
+
+                    self.bypass = true
                 end)
 
                 game:GetService("UserInputService").InputBegan:Connect(function(input)
-                    if input.KeyCode == Enum.KeyCode.LeftShift then
-                        player.Character.Humanoid.WalkSpeed = self.speed        
+                    if self.bypass then
+                        if input.KeyCode == Enum.KeyCode.LeftShift then
+                            player.Character.Humanoid.WalkSpeed = self.speed        
+                        end
                     end
                 end)
 
                 game:GetService("UserInputService").InputEnded:Connect(function(input)
-                    if input.KeyCode == Enum.KeyCode.LeftShift then
-                        player.Character.Humanoid.WalkSpeed = 16        
+                    if self.bypass then
+                        if input.KeyCode == Enum.KeyCode.LeftShift then
+                            player.Character.Humanoid.WalkSpeed = 16        
+                        end
                     end
                 end)
             end)
@@ -206,7 +221,10 @@ do
                         self.godConn = self.godConn:Disconnect()
                     end
                 else
-                    
+                    game:GetService("StarterGui"):SetCore("SendNotification", {
+                        Title = "[Anticheat]";
+                        Text = "You have not enabled the anticheat bypass!";
+                    })
                 end
             end)
 
@@ -214,14 +232,17 @@ do
                 if self.bypass then
                     if game.PlaceId == 4669040 then
                         game:GetService("StarterGui"):SetCore("SendNotification", {
-                            Title = "[Teleport Failed]";
+                            Title = "[TP Failed]";
                             Text = "You're in the prison!";
                         })
                     else
                         player.Character:MoveTo(workspace["Uzi | $150"].Head.Position)
                     end
                 else
-
+                    game:GetService("StarterGui"):SetCore("SendNotification", {
+                        Title = "[Anticheat]";
+                        Text = "You have not enabled the anticheat bypass!";
+                    })
                 end
             end)
             
@@ -229,14 +250,17 @@ do
                  if self.bypass then
                     if game.PlaceId == 4669040 then
                         game:GetService("StarterGui"):SetCore("SendNotification", {
-                            Title = "[Teleport Failed]";
+                            Title = "[TP Failed]";
                             Text = "You're in the prison!";
                         })
                     else
                         player.Character:MoveTo(workspace["Glock | $200"].Head.Position)
                     end
                 else
-
+                    game:GetService("StarterGui"):SetCore("SendNotification", {
+                        Title = "[Anticheat]";
+                        Text = "You have not enabled the anticheat bypass!";
+                    })
                 end
             end)
 
@@ -244,22 +268,25 @@ do
                 if self.bypass then
                     if value then
                         if not self.antiKnock then
-                            self.antiKnock = player.Character.Humanoid.StateChanged:Connect(function(antifunction)
+                            self.antiKnock = player.Character.Humanoid.StateChanged:Connect(function(state)
                                 repeat
                                     wait()
-                                    if antifunction == Enum.HumanoidStateType.FallingDown or antifunction == Enum.HumanoidStateType.RunningNoPhysics then
-                                        player.Character.Humanoid:ChangeState(Enum.HumanoidStateType.PlatformStanding and Enum.HumanoidStateType.GettingUp)
+                                    if state == Enum.HumanoidStateType.FallingDown or state == Enum.HumanoidStateType.RunningNoPhysics then
+                                        player.Character.Humanoid:ChangeState(Enum.HumanoidStateType.PlatformStanding)
                                     end
-                                until not value
+                                until not self.antiKnock
                             end)
                         end
                     else
                         self.antiKnock = self.antiKnock:Disconnect()
                     end
-                end)
-            else
-
-            end
+                else
+                    game:GetService("StarterGui"):SetCore("SendNotification", {
+                        Title = "[Anticheat]";
+                        Text = "You have not enabled the anticheat bypass!";
+                    })
+                end
+            end)
         end
     end
     
