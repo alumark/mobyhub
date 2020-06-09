@@ -187,6 +187,7 @@ do
                 slider:Set(24)
             end)
 
+            window:Selection("Requires Bypass")
             local godMode = window:Toggle("God", {flag = "god"}, function(value)
                 if value then
                     if not self.godConn then
@@ -201,6 +202,45 @@ do
                     end
                 else
                     self.godConn = self.godConn:Disconnect()
+                end
+            end)
+
+            local uziButton = window:Button("Buy Uzi", function()
+                if game.PlaceId == 4669040 then
+                    game:GetService("StarterGui"):SetCore("SendNotification", {
+                        Title = "[Teleport Failed]";
+                        Text = "You're in the prison!";
+                    })
+                else
+                    player.Character:MoveTo(workspace["Uzi | $150"].Head.Position)
+                end
+            end)
+            
+            local glockButton = window:Button("Buy Glock", function()
+                if game.PlaceId == 4669040 then
+                    game:GetService("StarterGui"):SetCore("SendNotification", {
+                        Title = "[Teleport Failed]";
+                        Text = "You're in the prison!";
+                    })
+                else
+                    player.Character:MoveTo(workspace["Glock | $200"].Head.Position)
+                end
+            end)
+
+            local antiKnock = window:Toggle("Antiknock", {flag = "antiknock"}, function(value)
+                if value then
+                    if not self.antiKnock then
+                        self.antiKnock = player.Character.Humanoid.StateChanged:Connect(function(antifunction)
+                            repeat
+                                wait()
+                                if antifunction == Enum.HumanoidStateType.FallingDown or antifunction == Enum.HumanoidStateType.RunningNoPhysics then
+                                    player.Character.Humanoid:ChangeState(Enum.HumanoidStateType.PlatformStanding and Enum.HumanoidStateType.GettingUp)
+                                end
+                            until not value
+                        end)
+                    end
+                else
+                    self.antiKnock = self.antiKnock:Disconnect()
                 end
             end)
         end
