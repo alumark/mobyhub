@@ -109,7 +109,6 @@ do
             window:Section("Bypass")
             window:Button("Anti-Cheat Bypass", function()
                 loadstring([[
-                    print("enabling bypass")
                     local gamelememe = getrawmetatable(game)
                     local Closure, Caller = hide_me or newcclosure, checkcaller or is_protosmasher_caller or Cer.isCerus
                     local writeable = setreadonly(gamelememe, false) or make_writeable(gamelememe)
@@ -121,7 +120,7 @@ do
                     local fakemodel = Instance.new("Model")
                     fakemodel.Parent = game.Workspace
                     fakehumanoid = Instance.new("Humanoid")
-                    
+
                     gamelememe.__newindex = Closure(function(self, Property, b)
                         if not Caller() then
                             if self:IsA'Humanoid' then
@@ -138,7 +137,7 @@ do
                         end
                         return nindex(self, Property, b)
                     end)
-                    
+
                     gamelememe.__namecall = Closure(function(self, ...)
                         if not Caller() then
                             local Arguments = {
@@ -160,6 +159,7 @@ do
                             end
                         end
                         return name(self, ...)
+                    end)
                 ]])()
 
                 game:GetService("UserInputService").InputBegan:Connect(function(input)
