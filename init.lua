@@ -366,8 +366,9 @@ do
                 if self.bypass then
                     if value then
                         if not self.godConn then
+                            local hum = player.Character.Humanoid
                             self.godConn = game:GetService("RunService").Stepped:Connect(function()
-                                player.Character.Humanoid.Health = 0
+                                hum.Health = 0
                                 for _, v in pairs(player.Character:GetChildren()) do
                                     if v.Name == "Right Leg" then
                                         v:Destroy()
@@ -520,8 +521,6 @@ do
                 infiniteJump = value
             end)
 
-
-
             local superPunch = window:Toggle("Superpunch", {flag = "superPunch"}, function(value)
                 if value then
                     if player.Character:FindFirstChild("Punch") then
@@ -556,16 +555,14 @@ do
 
             local antistomp = false
             window:Toggle("Antistomp", {flag = "antistomp"}, function(value)
-                if value then
-                    antistomp = true
-                    if antistomp then
-                        repeat
-                            if player.Character:FindFirstChild("KO") then
-                                player.Character:findFirstChildOfClass("Humanoid"):ChangeState(7)
-                            end
-                            wait()
-                        until not antistomp
-                    end
+                antistomp = value
+                if antistomp then
+                    repeat
+                        if player.Character:FindFirstChild("KO") then
+                            player.Character:findFirstChildOfClass("Humanoid"):ChangeState(7)
+                        end
+                        wait()
+                    until not antistomp
                 end
             end)
         end
