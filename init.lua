@@ -15,7 +15,7 @@
 --]]
 
 repeat 
-    wait(5)
+    wait()
 until game:IsLoaded()
 
 local players = game:GetService("Players");
@@ -23,7 +23,7 @@ local runService = game:GetService("RunService");
 
 local player = game.Players.LocalPlayer
 local Library = loadstring(game:HttpGet("https://pastebin.com/raw/AtQAJECZ", true))()
-local OwlESP = loadstring(game:HttpGetAsync("https://raw.githubusercontent.com/CriShoux/OwlHub/master/scripts/OwlESP.lua"))();
+local OwlESP = loadstring(game:HttpGet("https://raw.githubusercontent.com/CriShoux/OwlHub/master/scripts/OwlESP.lua"))();
 
 function fastSpawn(func, ...)
 	assert(type(func) == "function")
@@ -170,6 +170,10 @@ do
             window:Toggle("ESP", {
                 flag = "esp"
             }, function(enable)
+                for _, v in pairs(tracking) do
+                    v:remove();
+                end
+                tracking = {};
                 self.espEnabled = enable
                 for _, plr in ipairs(players:GetPlayers()) do
                     playerAdded(plr)
@@ -179,6 +183,10 @@ do
             window:Toggle("Tracers", {
                 flag = "tracers"
             }, function(enable)
+                for _, v in pairs(tracking) do
+                    v:remove();
+                end
+                tracking = {};
                 self.tracersEnabled = enable
                 for _, plr in ipairs(players:GetPlayers()) do
                     playerAdded(plr)
@@ -220,7 +228,7 @@ do
 
                             if index == "CFrame" and self.Name == "HumanoidRootPart" or self.Name == "Torso" then
                                 return
-                            end
+                            end 
                         end
 
                         return mt_newindex(self, index, value)
