@@ -25,6 +25,10 @@ local player = game.Players.LocalPlayer
 local Library = loadstring(game:HttpGet("https://pastebin.com/raw/AtQAJECZ", true))()
 local OwlESP = loadstring(game:HttpGet("https://raw.githubusercontent.com/CriShoux/OwlHub/master/scripts/OwlESP.lua"))();
 
+local GripOnOff = false
+local DupeOnOff = false
+local antiknock = false
+
 function fastSpawn(func, ...)
 	assert(type(func) == "function")
 
@@ -201,6 +205,71 @@ do
         hub.games[THE_STREETS].InitializeUI = function(self)
             self.speed = 24
 
+            local function grip()
+                game:GetService("RunService").Stepped:connect(function()
+                    local hum = player.Character.Humanoid
+                    if GripOnOff == true and not GripOnOff == false then
+                        hum.Health = 0
+                        for _,x in pairs(player.Character:GetChildren()) do
+                            if x.Name == "Right Leg" then
+                                x:Destroy()
+                            end
+                        end
+                    end
+                end)
+            end
+
+            local function dupe()
+                local hum = player.Character.Humanoid
+                if DupeOnOff == true and GripOnOff == true then
+                    repeat
+                        for _, x in pairs(player.Backpack:GetChildren()) do
+                            if x:IsA("Tool") then
+                                x.Parent = player
+                            end
+                        end
+                        for _, b in pairs(player.Character:GetChildren()) do
+                            if b:IsA("Part") then
+                                if b.Name == "Right Leg" then
+                                    print("Leg Found")
+                                else
+                                    hum:Destroy()
+                                    hum:RemoveAccessories()
+                                    b:Destroy()
+                                end
+                            end
+                        end
+                        wait()
+                    until DupeOnOff == false
+                else
+                    if DupeOnOff == true and GripOnOff == false then
+                        player.Character.Humanoid.Health = 0
+                        GripOnOff = true
+                        grip()
+                        wait(7)
+                        repeat
+                            for _,x in pairs(player.Backpack:GetChildren()) do
+                                if x:IsA("Tool") then
+                                    x.Parent = player
+                                end
+                            end
+                            for _, b in pairs(player.Character:GetChildren()) do
+                                if b:IsA("Part") then
+                                    if b.Name == "Right Leg" then
+                                        print("Leg Found")
+                                    else
+                                        player:Destroy()
+                                        hum:RemoveAccessories()
+                                        b:Destroy()
+                                    end
+                                end
+                            end
+                            wait()
+                        until DupeOnOff == false
+                    end
+                end
+            end
+
             local window = Library:CreateWindow("The Streets")
             window:Section("Bypass")
             window:Button("Anti-Cheat Bypass", function()
@@ -325,7 +394,20 @@ do
                             Text = "You're in the prison!";
                         })
                     else
-                        player.Character:MoveTo(workspace["Uzi | $150"].Head.Position)
+                        local bought
+
+                        local conn
+                        conn = player.Backpack.ChildAdded:Connect(function(child)
+                            if child:IsA("Tool") then
+                                bought = true
+                                conn:Disconnect()
+                            end
+                        end)
+
+                        repeat
+                            wait()
+                            player.Character.HumanoidRootPart.CFrame = workspace["Uzi | $150"].Head.CFrame + Vector3.new(0, 2, 0)
+                        until bought
                     end
                 else
                     game:GetService("StarterGui"):SetCore("SendNotification", {
@@ -343,7 +425,20 @@ do
                             Text = "You're in the prison!";
                         })
                     else
-                        player.Character:MoveTo(workspace["Glock | $200"].Head.Position)
+                        local bought
+
+                        local conn
+                        conn = player.Backpack.ChildAdded:Connect(function(child)
+                            if child:IsA("Tool") then
+                                bought = true
+                                conn:Disconnect()
+                            end
+                        end)
+
+                        repeat
+                            wait()
+                            player.Character.HumanoidRootPart.CFrame = workspace["Glock | $150"].Head.CFrame + Vector3.new(0, 2, 0)
+                        until bought
                     end
                 else
                     game:GetService("StarterGui"):SetCore("SendNotification", {
@@ -353,27 +448,124 @@ do
                 end
             end)
 
+            window:Button("Buy Sawed Off", function()
+                if self.bypass then
+                   if game.PlaceId == 4669040 then
+                       game:GetService("StarterGui"):SetCore("SendNotification", {
+                           Title = "[TP Failed]";
+                           Text = "You're in the prison!";
+                       })
+                   else
+                       local bought
+
+                       local conn
+                       conn = player.Backpack.ChildAdded:Connect(function(child)
+                           if child:IsA("Tool") then
+                               bought = true
+                               conn:Disconnect()
+                           end
+                       end)
+
+                       repeat
+                           wait()
+                           player.Character.HumanoidRootPart.CFrame = workspace["Sawed Off | $150"].Head.CFrame + Vector3.new(0, 2, 0)
+                       until bought
+                   end
+               else
+                   game:GetService("StarterGui"):SetCore("SendNotification", {
+                       Title = "[Anticheat]";
+                       Text = "You have not enabled the anticheat bypass!";
+                   })
+               end
+           end)
+
             window:Toggle("Antiknock", {flag = "antiknock"}, function(value)
                 if self.bypass then
-                    if value then
-                        if not self.antiKnock then
-                            self.antiKnock = player.Character.Humanoid.StateChanged:Connect(function(state)
-                                repeat
-                                    wait()
-                                    if state == Enum.HumanoidStateType.FallingDown or state == Enum.HumanoidStateType.RunningNoPhysics then
-                                        player.Character.Humanoid:ChangeState(Enum.HumanoidStateType.PlatformStanding)
-                                    end
-                                until not self.antiKnock
-                            end)
+                    antiknock = value
+                    local conn
+                    conn = player.Character.Humanoid.StateChanged:Connect(function(antifunction)
+                        if antiknock then
+                            repeat
+                                wait()
+                                if antifunction == Enum.HumanoidStateType.FallingDown or antifunction == Enum.HumanoidStateType.RunningNoPhysics then
+                                    player.Character.Humanoid:ChangeState(Enum.HumanoidStateType.PlatformStanding and Enum.HumanoidStateType.GettingUp)
+                                else
+                                    return
+                                end
+                            until not antiknock
+
+                            conn:Disconnect()
                         end
-                    else
-                        self.antiKnock = self.antiKnock:Disconnect()
-                    end
+                    end)
                 else
                     game:GetService("StarterGui"):SetCore("SendNotification", {
                         Title = "[Anticheat]";
                         Text = "You have not enabled the anticheat bypass!";
                     })
+                end
+            end)
+
+            local infiniteJump = false
+            game:GetService("UserInputService").InputBegan:Connect(function(input)
+                if input.KeyCode == Enum.KeyCode.Space then
+                    if infiniteJump then
+                        player.Character.Humanoid:ChangeState(Enum.HumanoidStateType.Jumping)
+                    else
+                        return
+                    end
+                end
+            end)
+
+            window:Toggle("Infinite Jump", {flag = "infiniteJump"}, function(value)
+                infiniteJump = value
+            end)
+
+
+
+            local superPunch = window:Toggle("Superpunch", {flag = "superPunch"}, function(value)
+                if value then
+                    if player.Character:FindFirstChild("Punch") then
+                        for _, x in ipairs(player.Character:GetChildren()) do
+                            if x:IsA("Tool") and x.Name == "Punch" then
+                                x.Grip = player.Character.Torso.CFrame * CFrame.new(math.huge,math.huge,math.huge)
+                                wait(0.3)
+                                x.Parent = player.Backpack
+                                wait(0.5)
+                                x.Parent = player.Character
+                            end
+                        end
+                    elseif player.Backpack:FindFirstChild("Punch") then
+                        player.Backpack.Punch.Parent = player.Character
+                        wait(0.01)
+                        for _, x in ipairs(player.Character:GetChildren()) do
+                            if x:IsA("Tool") and x.Name == "Punch" then
+                                x.Grip = player.Character.Torso.CFrame * CFrame.new(math.huge,math.huge,math.huge)
+                                wait(0.3)
+                                x.Parent = player.Backpack
+                                wait(0.5)
+                                x.Parent = player.Character
+                            end
+                        end
+                    end
+                end
+            end)
+
+            player.Character.Humanoid.Died:Connect(function()
+                superPunch:Set(false)
+            end)
+
+            local antistomp = false
+            window:Toggle("Antistomp", {flag = "antistomp"}, function(value)
+                if value then
+                    antistomp = true
+                    if antistomp then
+                        repeat
+                            if player.Character:FindFirstChild("KO") then
+                                player.Character:findFirstChildOfClass("Humanoid"):ChangeState(7)
+                            end
+                            wait()
+                        until not antistomp
+                    end
                 end
             end)
         end
