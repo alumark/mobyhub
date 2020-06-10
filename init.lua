@@ -273,7 +273,7 @@ do
             local window = Library:CreateWindow("The Streets")
             window:Section("Bypass")
             window:Button("Anti-Cheat Bypass", function()
-                fastSpawn(function()
+                pcall(function()
                     local mt = getrawmetatable(game)
                     local newcclosure, checkcaller = hide_me or newcclosure, checkcaller or is_protosmasher_caller or Cer.isCerus
                     local mt_namecall, mt_newindex = mt.__namecall, mt.__newindex
