@@ -395,20 +395,22 @@ do
                             Text = "You're in the prison!";
                         })
                     else
-                        local bought
+                        fastSpawn(function()
+                            local bought
 
-                        local conn
-                        conn = player.Backpack.ChildAdded:Connect(function(child)
-                            if child:IsA("Tool") then
-                                bought = true
-                                conn:Disconnect()
-                            end
+                            local conn
+                            conn = player.Backpack.ChildAdded:Connect(function(child)
+                                if child:IsA("Tool") then
+                                    bought = true
+                                    conn:Disconnect()
+                                end
+                            end)
+
+                            repeat
+                                wait()
+                                player.Character.HumanoidRootPart.CFrame = workspace["Uzi | $150"].Head.CFrame + Vector3.new(0, 2, 0)
+                            until bought
                         end)
-
-                        repeat
-                            wait()
-                            player.Character.HumanoidRootPart.CFrame = workspace["Uzi | $150"].Head.CFrame + Vector3.new(0, 2, 0)
-                        until bought
                     end
                 else
                     game:GetService("StarterGui"):SetCore("SendNotification", {
@@ -426,20 +428,22 @@ do
                             Text = "You're in the prison!";
                         })
                     else
-                        local bought
+                        fastSpawn(function()
+                            local bought
 
-                        local conn
-                        conn = player.Backpack.ChildAdded:Connect(function(child)
-                            if child:IsA("Tool") then
-                                bought = true
-                                conn:Disconnect()
-                            end
+                            local conn
+                            conn = player.Backpack.ChildAdded:Connect(function(child)
+                                if child:IsA("Tool") then
+                                    bought = true
+                                    conn:Disconnect()
+                                end
+                            end)
+
+                            repeat
+                                wait()
+                                player.Character.HumanoidRootPart.CFrame = workspace["Glock | $200"].Head.CFrame + Vector3.new(0, 2, 0)
+                            until bought
                         end)
-
-                        repeat
-                            wait()
-                            player.Character.HumanoidRootPart.CFrame = workspace["Glock | $150"].Head.CFrame + Vector3.new(0, 2, 0)
-                        until bought
                     end
                 else
                     game:GetService("StarterGui"):SetCore("SendNotification", {
@@ -457,20 +461,22 @@ do
                            Text = "You're in the prison!";
                        })
                    else
-                       local bought
+                        fastSpawn(function()
+                            local bought
 
-                       local conn
-                       conn = player.Backpack.ChildAdded:Connect(function(child)
-                           if child:IsA("Tool") then
-                               bought = true
-                               conn:Disconnect()
-                           end
-                       end)
+                            local conn
+                            conn = player.Backpack.ChildAdded:Connect(function(child)
+                                if child:IsA("Tool") then
+                                    bought = true
+                                    conn:Disconnect()
+                                end
+                            end)
 
-                       repeat
-                           wait()
-                           player.Character.HumanoidRootPart.CFrame = workspace["Sawed Off | $150"].Head.CFrame + Vector3.new(0, 2, 0)
-                       until bought
+                            repeat
+                                wait()
+                                player.Character.HumanoidRootPart.CFrame = workspace["Sawed Off | $150"].Head.CFrame + Vector3.new(0, 2, 0)
+                            until bought
+                        end)
                    end
                else
                    game:GetService("StarterGui"):SetCore("SendNotification", {
@@ -522,35 +528,33 @@ do
             end)
 
             local superPunch = window:Toggle("Superpunch", {flag = "superPunch"}, function(value)
-                if value then
-                    if player.Character:FindFirstChild("Punch") then
-                        for _, x in ipairs(player.Character:GetChildren()) do
-                            if x:IsA("Tool") and x.Name == "Punch" then
-                                x.Grip = player.Character.Torso.CFrame * CFrame.new(math.huge,math.huge,math.huge)
-                                wait(0.3)
-                                x.Parent = player.Backpack
-                                wait(0.5)
-                                x.Parent = player.Character
+                fastSpawn(function()
+                    if value then
+                        if player.Character:FindFirstChild("Punch") then
+                            for _, x in ipairs(player.Character:GetChildren()) do
+                                if x:IsA("Tool") and x.Name == "Punch" then
+                                    x.Grip = player.Character.Torso.CFrame * CFrame.new(math.huge,math.huge,math.huge)
+                                    wait(0.3)
+                                    x.Parent = player.Backpack
+                                    wait(0.5)
+                                    x.Parent = player.Character
+                                end
                             end
-                        end
-                    elseif player.Backpack:FindFirstChild("Punch") then
-                        player.Backpack.Punch.Parent = player.Character
-                        wait(0.01)
-                        for _, x in ipairs(player.Character:GetChildren()) do
-                            if x:IsA("Tool") and x.Name == "Punch" then
-                                x.Grip = player.Character.Torso.CFrame * CFrame.new(math.huge,math.huge,math.huge)
-                                wait(0.3)
-                                x.Parent = player.Backpack
-                                wait(0.5)
-                                x.Parent = player.Character
+                        elseif player.Backpack:FindFirstChild("Punch") then
+                            player.Backpack.Punch.Parent = player.Character
+                            wait(0.01)
+                            for _, x in ipairs(player.Character:GetChildren()) do
+                                if x:IsA("Tool") and x.Name == "Punch" then
+                                    x.Grip = player.Character.Torso.CFrame * CFrame.new(math.huge,math.huge,math.huge)
+                                    wait(0.3)
+                                    x.Parent = player.Backpack
+                                    wait(0.5)
+                                    x.Parent = player.Character
+                                end
                             end
                         end
                     end
-                end
-            end)
-
-            player.Character.Humanoid.Died:Connect(function()
-                superPunch:Set(false)
+                end)
             end)
 
             local antistomp = false
@@ -574,59 +578,40 @@ do
         hub.games[SHARK_BITE].InitializeUI = function(self)
             self.flySpeed = 100
 
-            local window = Library:Window("Sharkbite")
+            local window = Library:CreateWindow("Sharkbite")
 
             -- Shark Commands
             window:Section("Shark Commands")
             window:Toggle("Fly as Shark", {flag = "sharkFly"}, function(enabled)
                 self.flyEnabled = enabled
+                fastSpawn(function()
+                    local mouse = game.Players.LocalPlayer:GetMouse()
 
-                repeat
-                    wait()
-                until game:IsLoaded()
-
-                local mouse = game.Players.LocalPlayer:GetMouse()
-
-                repeat 
-                    wait() 
-                until mouse
-                local bv, bg
-                
-                while self.flyEnabled do 
-                    wait()
-
-                    local body = workspace.Sharks:FindFirstChild("Shark" .. game.Players.LocalPlayer.Name)
-                    if body then
-                        local torso = body.Body
-                
-                        for _, move in next, body:GetChildren() do 
-                            if move:IsA("BodyMover") then
-                                move:Destroy() 
+                    repeat 
+                        wait() 
+                    until mouse
+                    
+                    while self.flyEnabled do 
+                        wait()
+                        local body = workspace.Sharks:FindFirstChild("Shark"..game.Players.LocalPlayer.Name)
+                        if body then
+                            local torso = body.Body
+                    
+                            for _, move in next, body:GetChildren() do 
+                                if move:IsA("BodyMover") then 
+                                    move:Destroy() 
+                                end
                             end
+                            
+                            torso.Velocity = mouse.Hit.lookVector * self.flySpeed
                         end
-
-                        if not bv then
-                            bv = Instance.new("BodyVelocity")
-                            bv.maxForce = Vector3.new(9e9, 9e9, 9e9)
-                            bv.Parent = torso
-                        end
-                        
-                        if not bg then
-                            bg = Instance.new("BodyGyro")
-                            bg.P = 9e4
-                            bg.maxTorque = Vector3.new(9e9, 9e9, 9e9)
-                            bg.Parent = torso
-                        end
-
-                        bg.CFrame = mouse.Hit
-                        torso.Velocity = mouse.Hit.LookVector * self.flySpeed
                     end
-                end
+                end)
             end)
 
             window:Slider("Fly Speed", {
                 min = 100,
-                max = 1000,
+                max = 500,
                 flags = "flySpeed"
             }, function(speed)
                 self.flySpeed = speed
