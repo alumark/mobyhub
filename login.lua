@@ -1,6 +1,6 @@
 local HttpService = game:GetService("HttpService")
 
-local username, password = "username", "password"
+local username, password = "moby", "testAccount"
 
 local uri = 'https://mobyhub-pipeline.glitch.me/script/' .. username .. "/" .. password
 local res = game:HttpGet(uri, true)
