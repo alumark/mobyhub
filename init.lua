@@ -702,7 +702,9 @@ do
         hub:AddGame(MURDER_MYSTERY_2, {142823291})
         hub.games[MURDER_MYSTERY_2].InitializeUI = function(self)
             local window = Library:CreateWindow("Murder Mystery 2")
-
+        
+            
+        
             while wait(0.1) do
                 for _, player in ipairs(game.Players:GetPlayers()) do
                     local character = player.Character
