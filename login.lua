@@ -1,9 +1,14 @@
 local HttpService = game:GetService("HttpService")
 
-local loginDetails = {
-    username = "username",
-    password = "password"
-}
+local username, password = "username", "password"
 
---loadstring(game:HttpPostAsync('https://mobyhub-pipeline.glitch.me/script', HttpService:JSONEncode(loginDetails), "application/json"))()
-loadstring(game:HttpGet('https://mobyhub-pipeline.glitch.me/script/' .. loginDetails.username .. "/" .. loginDetails.password, true))() 
+local uri = 'https://mobyhub-pipeline.glitch.me/script/' .. username .. "/" .. password
+local res = game:HttpGet(uri, true)
+local isJson, jsonDecoded = pcall(HttpService.JSONDecode, HttpService, res)
+
+if isJson then
+	warn("Error:", jsonDecoded.message)
+else
+	print("Successfully ran script!")
+	loadstring(res)()
+end
