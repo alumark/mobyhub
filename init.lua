@@ -23,7 +23,7 @@ local runService = game:GetService("RunService");
 
 local player = game.Players.LocalPlayer
 local Library = loadstring(game:HttpGet("https://pastebin.com/raw/AtQAJECZ", true))()
-local OwlESP = loadstring(game:HttpGet("https://raw.githubusercontent.com/CriShoux/OwlHub/master/scripts/OwlESP.lua"))();
+--local OwlESP = loadstring(game:HttpGet("https://raw.githubusercontent.com/CriShoux/OwlHub/master/scripts/OwlESP.lua"))();
 
 local GripOnOff = false
 local DupeOnOff = false
@@ -55,7 +55,7 @@ do
 	
 	function Game:Open()
 		if self.InitializeUI then
-			self:InitializeUI()	
+			fastSpawn(self.InitializeUI, self)	
 		end
 	end
 end
@@ -205,85 +205,21 @@ do
         hub.games[THE_STREETS].InitializeUI = function(self)
             self.speed = 24
 
-            local function grip()
-                game:GetService("RunService").Stepped:connect(function()
-                    local hum = player.Character.Humanoid
-                    if GripOnOff == true and not GripOnOff == false then
-                        hum.Health = 0
-                        for _,x in pairs(player.Character:GetChildren()) do
-                            if x.Name == "Right Leg" then
-                                x:Destroy()
-                            end
-                        end
-                    end
-                end)
-            end
-
-            local function dupe()
-                local hum = player.Character.Humanoid
-                if DupeOnOff == true and GripOnOff == true then
-                    repeat
-                        for _, x in pairs(player.Backpack:GetChildren()) do
-                            if x:IsA("Tool") then
-                                x.Parent = player
-                            end
-                        end
-                        for _, b in pairs(player.Character:GetChildren()) do
-                            if b:IsA("Part") then
-                                if b.Name == "Right Leg" then
-                                    print("Leg Found")
-                                else
-                                    hum:Destroy()
-                                    hum:RemoveAccessories()
-                                    b:Destroy()
-                                end
-                            end
-                        end
-                        wait()
-                    until DupeOnOff == false
-                else
-                    if DupeOnOff == true and GripOnOff == false then
-                        player.Character.Humanoid.Health = 0
-                        GripOnOff = true
-                        grip()
-                        wait(7)
-                        repeat
-                            for _,x in pairs(player.Backpack:GetChildren()) do
-                                if x:IsA("Tool") then
-                                    x.Parent = player
-                                end
-                            end
-                            for _, b in pairs(player.Character:GetChildren()) do
-                                if b:IsA("Part") then
-                                    if b.Name == "Right Leg" then
-                                        print("Leg Found")
-                                    else
-                                        player:Destroy()
-                                        hum:RemoveAccessories()
-                                        b:Destroy()
-                                    end
-                                end
-                            end
-                            wait()
-                        until DupeOnOff == false
-                    end
-                end
-            end
-
             local window = Library:CreateWindow("The Streets")
             window:Section("Bypass")
             window:Button("Anti-Cheat Bypass", function()
                 pcall(function()
                     local mt = getrawmetatable(game)
-                    local newcclosure, checkcaller = hide_me or newcclosure, checkcaller or is_protosmasher_caller or Cer.isCerus
-                    local mt_namecall, mt_newindex = mt.__namecall, mt.__newindex
+                    local closure, caller = hide_me or newcclosure, checkcaller or is_protosmasher_caller or Cer.isCerus
                     local setreadonly = setreadonly or make_writable
-                    
+
+                    local mt_namecall, mt_newindex = mt.__namecall, mt.__newindex
+
                     setreadonly(mt, false)
 
-                    mt.__newindex = newcclosure(function(self, index, value)
-                        if not checkcaller() then
-                            if self:IsA('Humanoid') then
+                    mt.__newindex = closure(function(instance, index, value)
+                        if not caller() then
+                            if instance:IsA('Humanoid') then
                                 game:GetService('StarterGui'):SetCore('ResetButtonCallback', true)
 
                                 if index == "WalkSpeed" then
@@ -295,28 +231,29 @@ do
                                 end
                             end
 
-                            if index == "CFrame" and self.Name == "HumanoidRootPart" or self.Name == "Torso" then
+                            if index == "CFrame" and instance.Name == "HumanoidRootPart" or instance.Name == "Torso" then
                                 return
                             end 
                         end
 
-                        return mt_newindex(self, index, value)
+                        return mt_newindex(instance, index, value)
                     end)
 
-                    mt.__namecall = newcclosure(function(self, ...)
-                        if not checkcaller() then
+                    mt.__namecall = closure(function(instance, ...)
+                        local method = getnamecallmethod()
+                        if not caller() then
                             local args = {...}
 
-                            if getnamecallmethod() == "Destroy" and self:IsA("BodyMover") then
-                                return fuckyou(self, ...)
+                            if method == "Destroy" and instance:IsA("BodyMover") then
+                                return fuckyou(instance, ...)
                             end
 
-                            if getnamecallmethod() == "BreakJoints" and self.Name == player.Character.Name then
-                                return fuckyou(self, ...)
+                            if method == "BreakJoints" and instance.Name == player.Character.Name then
+                                return fuckyou(instance, ...)
                             end
 
-                            if getnamecallmethod() == "FireServer" then
-                                if self.Name == "lIII" or self.Parent.Name == "ReplicatedStorage" then
+                            if method == "FireServer" then
+                                if instance.Name == "lIII" then
                                     return wait(9e9)
                                 end
 
@@ -326,7 +263,7 @@ do
                             end
                         end
 
-                        return mt_namecall(self, ...)
+                        return mt_namecall(instance, ...)
                     end)
 
                     self.bypass = true
@@ -366,9 +303,7 @@ do
                 if self.bypass then
                     if value then
                         if not self.godConn then
-                            local hum = player.Character.Humanoid
                             self.godConn = game:GetService("RunService").Stepped:Connect(function()
-                                hum.Health = 0
                                 for _, v in pairs(player.Character:GetChildren()) do
                                     if v.Name == "Right Leg" then
                                         v:Destroy()
@@ -395,22 +330,20 @@ do
                             Text = "You're in the prison!";
                         })
                     else
-                        fastSpawn(function()
-                            local bought
+                        local bought
 
-                            local conn
-                            conn = player.Backpack.ChildAdded:Connect(function(child)
-                                if child:IsA("Tool") then
-                                    bought = true
-                                    conn:Disconnect()
-                                end
-                            end)
-
-                            repeat
-                                wait()
-                                player.Character.HumanoidRootPart.CFrame = workspace["Uzi | $150"].Head.CFrame + Vector3.new(0, 2, 0)
-                            until bought
+                        local conn
+                        conn = player.Backpack.ChildAdded:Connect(function(child)
+                            if child:IsA("Tool") then
+                                bought = true
+                                conn:Disconnect()
+                            end
                         end)
+
+                        repeat
+                            wait()
+                            player.Character.HumanoidRootPart.CFrame = workspace["Uzi | $150"].Head.CFrame + Vector3.new(0, 2, 0)
+                        until bought
                     end
                 else
                     game:GetService("StarterGui"):SetCore("SendNotification", {
@@ -428,22 +361,20 @@ do
                             Text = "You're in the prison!";
                         })
                     else
-                        fastSpawn(function()
-                            local bought
+                        local bought
 
-                            local conn
-                            conn = player.Backpack.ChildAdded:Connect(function(child)
-                                if child:IsA("Tool") then
-                                    bought = true
-                                    conn:Disconnect()
-                                end
-                            end)
-
-                            repeat
-                                wait()
-                                player.Character.HumanoidRootPart.CFrame = workspace["Glock | $200"].Head.CFrame + Vector3.new(0, 2, 0)
-                            until bought
+                        local conn
+                        conn = player.Backpack.ChildAdded:Connect(function(child)
+                            if child:IsA("Tool") then
+                                bought = true
+                                conn:Disconnect()
+                            end
                         end)
+
+                        repeat
+                            wait()
+                            player.Character.HumanoidRootPart.CFrame = workspace["Glock | $200"].Head.CFrame + Vector3.new(0, 2, 0)
+                        until bought
                     end
                 else
                     game:GetService("StarterGui"):SetCore("SendNotification", {
@@ -461,22 +392,20 @@ do
                            Text = "You're in the prison!";
                        })
                    else
-                        fastSpawn(function()
-                            local bought
+                        local bought
 
-                            local conn
-                            conn = player.Backpack.ChildAdded:Connect(function(child)
-                                if child:IsA("Tool") then
-                                    bought = true
-                                    conn:Disconnect()
-                                end
-                            end)
-
-                            repeat
-                                wait()
-                                player.Character.HumanoidRootPart.CFrame = workspace["Sawed Off | $150"].Head.CFrame + Vector3.new(0, 2, 0)
-                            until bought
+                        local conn
+                        conn = player.Backpack.ChildAdded:Connect(function(child)
+                            if child:IsA("Tool") then
+                                bought = true
+                                conn:Disconnect()
+                            end
                         end)
+
+                        repeat
+                            wait()
+                            player.Character.HumanoidRootPart.CFrame = workspace["Sawed Off | $150"].Head.CFrame + Vector3.new(0, 2, 0)
+                        until bought
                    end
                else
                    game:GetService("StarterGui"):SetCore("SendNotification", {
@@ -528,8 +457,8 @@ do
             end)
 
             local superPunch = window:Toggle("Superpunch", {flag = "superPunch"}, function(value)
-                fastSpawn(function()
-                    if value then
+                if value then
+                    fastSpawn(function()
                         if player.Character:FindFirstChild("Punch") then
                             for _, x in ipairs(player.Character:GetChildren()) do
                                 if x:IsA("Tool") and x.Name == "Punch" then
@@ -540,33 +469,37 @@ do
                                     x.Parent = player.Character
                                 end
                             end
-                        elseif player.Backpack:FindFirstChild("Punch") then
-                            player.Backpack.Punch.Parent = player.Character
-                            wait(0.01)
-                            for _, x in ipairs(player.Character:GetChildren()) do
-                                if x:IsA("Tool") and x.Name == "Punch" then
-                                    x.Grip = player.Character.Torso.CFrame * CFrame.new(math.huge,math.huge,math.huge)
-                                    wait(0.3)
-                                    x.Parent = player.Backpack
-                                    wait(0.5)
-                                    x.Parent = player.Character
-                                end
+                        end
+                    end)
+                elseif player.Backpack:FindFirstChild("Punch") then
+                    fastSpawn(function()
+                        player.Backpack.Punch.Parent = player.Character
+                        wait(0.01)
+                        for _, x in ipairs(player.Character:GetChildren()) do
+                            if x:IsA("Tool") and x.Name == "Punch" then
+                                x.Grip = player.Character.Torso.CFrame * CFrame.new(math.huge,math.huge,math.huge)
+                                wait(0.3)
+                                x.Parent = player.Backpack
+                                wait(0.5)
+                                x.Parent = player.Character
                             end
                         end
-                    end
-                end)
+                    end)
+                end
             end)
 
             local antistomp = false
             window:Toggle("Antistomp", {flag = "antistomp"}, function(value)
                 antistomp = value
                 if antistomp then
-                    repeat
-                        if player.Character:FindFirstChild("KO") then
-                            player.Character:findFirstChildOfClass("Humanoid"):ChangeState(7)
-                        end
-                        wait()
-                    until not antistomp
+                    fastSpawn(function()
+                        repeat
+                            if player.Character:FindFirstChild("KO") then
+                                player.Character:findFirstChildOfClass("Humanoid"):ChangeState(7)
+                            end
+                            wait()
+                        until not antistomp
+                    end)
                 end
             end)
         end
