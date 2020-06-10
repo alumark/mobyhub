@@ -23,7 +23,7 @@ local runService = game:GetService("RunService");
 
 local player = game.Players.LocalPlayer
 local Library = loadstring(game:HttpGet("https://pastebin.com/raw/AtQAJECZ", true))()
---local OwlESP = loadstring(game:HttpGet("https://raw.githubusercontent.com/CriShoux/OwlHub/master/scripts/OwlESP.lua"))();
+local OwlESP = loadstring(game:HttpGet("https://raw.githubusercontent.com/CriShoux/OwlHub/master/scripts/OwlESP.lua"))();
 
 local GripOnOff = false
 local DupeOnOff = false
@@ -109,6 +109,9 @@ do
 	end
 end
 
+local tracking = {};
+local playerColours = {};
+
 local hub = Hub.new()
 do
     local UNIVERSAL = "Universal"
@@ -118,13 +121,10 @@ do
             self.espEnabled = false
             self.tracersEnabled = false
 
-            local tracking = {};
-
             local remove = table.remove;
             local fromRGB = Color3.fromRGB;
 
             local espColor = fromRGB(255, 255, 255);
-            local teamCheck = true;
 
             local function characterRemoving(char)
                 for i, v in next, tracking do
@@ -164,6 +164,11 @@ do
 
             runService.RenderStepped:Connect(function()
                 for _, v in ipairs(tracking) do
+                    if (#game.Teams:GetTeams() <= 0) then
+                        teamCheck = false;
+                    else
+                        teamCheck = true;
+                    end
                     v:update();
                 end;
             end);
@@ -173,12 +178,12 @@ do
             window:Section("Render")
             window:Toggle("ESP", {
                 flag = "esp"
-            }, function(enable)
+            }, function()
                 for _, v in pairs(tracking) do
                     v:remove();
                 end
                 tracking = {};
-                self.espEnabled = enable
+                self.espEnabled = window.flags.esp
                 for _, plr in ipairs(players:GetPlayers()) do
                     playerAdded(plr)
                 end;
@@ -186,12 +191,12 @@ do
 
             window:Toggle("Tracers", {
                 flag = "tracers"
-            }, function(enable)
+            }, function()
                 for _, v in pairs(tracking) do
                     v:remove();
                 end
                 tracking = {};
-                self.tracersEnabled = enable
+                self.tracersEnabled = window.flags.tracers
                 for _, plr in ipairs(players:GetPlayers()) do
                     playerAdded(plr)
                 end;
@@ -272,7 +277,7 @@ do
                 game:GetService("UserInputService").InputBegan:Connect(function(input)
                     if self.bypass then
                         if input.KeyCode == Enum.KeyCode.LeftShift then
-                            player.Character.Humanoid.WalkSpeed = self.speed        
+                            player.Character.Humanoid.WalkSpeed = window.flags.speed        
                         end
                     end
                 end)
@@ -417,7 +422,7 @@ do
 
             window:Toggle("Antiknock", {flag = "antiknock"}, function(value)
                 if self.bypass then
-                    antiknock = value
+                    antiknock = window.flags.antiknock
                     local conn
                     conn = player.Character.Humanoid.StateChanged:Connect(function(antifunction)
                         if antiknock then
@@ -453,11 +458,11 @@ do
             end)
 
             window:Toggle("Infinite Jump", {flag = "infiniteJump"}, function(value)
-                infiniteJump = value
+                infiniteJump = window.flags.infiniteJump
             end)
 
             local superPunch = window:Toggle("Superpunch", {flag = "superPunch"}, function(value)
-                if value then
+                if window.flags.superPunch then
                     fastSpawn(function()
                         if player.Character:FindFirstChild("Punch") then
                             for _, x in ipairs(player.Character:GetChildren()) do
@@ -692,7 +697,42 @@ do
         end
     end
     
+    local MURDER_MYSTERY_2 = "MM2"
+    do
+        hub:AddGame(MURDER_MYSTERY_2, {142823291})
+        hub.games[MURDER_MYSTERY_2].InitializeUI = function(self)
+            local window = Library:CreateWindow("Murder Mystery 2")
+
+            while wait(0.1) do
+                for _, player in ipairs(game.Players:GetPlayers()) do
+                    local character = player.Character
+                    if character then
+                        local knife = player.Backpack:FindFirstChild("Knife") or character:FindFirstChild("Knife")
+                        local gun = (
+                            player.Backpack:FindFirstChild("Revolver") or 
+                            character:FindFirstChild("Revolver") or 
+                            player.Backpack:FindFirstChild("Gun") or 
+                            character:FindFirstChild("Gun")
+                        )
+
+                        local colour = Color3.new(0, 1, 0)
+                        if knife then
+                            colour = Color3.new(1, 0, 0)
+                        elseif gun then
+                            colour = Color3.new(0, 0, 1)
+                        end
+
+                        for index, esp in pairs(tracking) do
+                            if esp.plr == player then
+                                tracking[index].espColor = colour
+                            end
+                        end
+                    end
+                end
+            end
+        end
+    end
+
     hub:OpenGame(game.PlaceId)
     hub:OpenGame(0)
 end
- 
