@@ -395,7 +395,6 @@ do
                             Text = "You're in the prison!";
                         })
                     else
-<<<<<<< HEAD
                         fastSpawn(function()
                             local bought
 
@@ -412,22 +411,6 @@ do
                                 player.Character.HumanoidRootPart.CFrame = workspace["Uzi | $150"].Head.CFrame + Vector3.new(0, 2, 0)
                             until bought
                         end)
-=======
-                        local bought
-
-                        local conn
-                        conn = player.Backpack.ChildAdded:Connect(function(child)
-                            if child:IsA("Tool") then
-                                bought = true
-                                conn:Disconnect()
-                            end
-                        end)
-
-                        repeat
-                            wait()
-                            player.Character.HumanoidRootPart.CFrame = workspace["Uzi | $150"].Head.CFrame + Vector3.new(0, 2, 0)
-                        until bought
->>>>>>> a442e36e4124f6bf418b93a66d5cf7301ee0bb89
                     end
                 else
                     game:GetService("StarterGui"):SetCore("SendNotification", {
@@ -445,7 +428,6 @@ do
                             Text = "You're in the prison!";
                         })
                     else
-<<<<<<< HEAD
                         fastSpawn(function()
                             local bought
 
@@ -462,22 +444,6 @@ do
                                 player.Character.HumanoidRootPart.CFrame = workspace["Glock | $200"].Head.CFrame + Vector3.new(0, 2, 0)
                             until bought
                         end)
-=======
-                        local bought
-
-                        local conn
-                        conn = player.Backpack.ChildAdded:Connect(function(child)
-                            if child:IsA("Tool") then
-                                bought = true
-                                conn:Disconnect()
-                            end
-                        end)
-
-                        repeat
-                            wait()
-                            player.Character.HumanoidRootPart.CFrame = workspace["Glock | $150"].Head.CFrame + Vector3.new(0, 2, 0)
-                        until bought
->>>>>>> a442e36e4124f6bf418b93a66d5cf7301ee0bb89
                     end
                 else
                     game:GetService("StarterGui"):SetCore("SendNotification", {
@@ -488,7 +454,6 @@ do
             end)
 
             window:Button("Buy Sawed Off", function()
-<<<<<<< HEAD
                 if self.bypass then
                    if game.PlaceId == 4669040 then
                        game:GetService("StarterGui"):SetCore("SendNotification", {
@@ -523,40 +488,6 @@ do
 
             window:Toggle("Antiknock", {flag = "antiknock"}, function(value)
                 if self.bypass then
-=======
-                if self.bypass then
-                   if game.PlaceId == 4669040 then
-                       game:GetService("StarterGui"):SetCore("SendNotification", {
-                           Title = "[TP Failed]";
-                           Text = "You're in the prison!";
-                       })
-                   else
-                       local bought
-
-                       local conn
-                       conn = player.Backpack.ChildAdded:Connect(function(child)
-                           if child:IsA("Tool") then
-                               bought = true
-                               conn:Disconnect()
-                           end
-                       end)
-
-                       repeat
-                           wait()
-                           player.Character.HumanoidRootPart.CFrame = workspace["Sawed Off | $150"].Head.CFrame + Vector3.new(0, 2, 0)
-                       until bought
-                   end
-               else
-                   game:GetService("StarterGui"):SetCore("SendNotification", {
-                       Title = "[Anticheat]";
-                       Text = "You have not enabled the anticheat bypass!";
-                   })
-               end
-           end)
-
-            window:Toggle("Antiknock", {flag = "antiknock"}, function(value)
-                if self.bypass then
->>>>>>> a442e36e4124f6bf418b93a66d5cf7301ee0bb89
                     antiknock = value
                     local conn
                     conn = player.Character.Humanoid.StateChanged:Connect(function(antifunction)
@@ -596,7 +527,6 @@ do
                 infiniteJump = value
             end)
 
-<<<<<<< HEAD
             local superPunch = window:Toggle("Superpunch", {flag = "superPunch"}, function(value)
                 fastSpawn(function()
                     if value then
@@ -625,45 +555,10 @@ do
                         end
                     end
                 end)
-=======
-
-
-            local superPunch = window:Toggle("Superpunch", {flag = "superPunch"}, function(value)
-                if value then
-                    if player.Character:FindFirstChild("Punch") then
-                        for _, x in ipairs(player.Character:GetChildren()) do
-                            if x:IsA("Tool") and x.Name == "Punch" then
-                                x.Grip = player.Character.Torso.CFrame * CFrame.new(math.huge,math.huge,math.huge)
-                                wait(0.3)
-                                x.Parent = player.Backpack
-                                wait(0.5)
-                                x.Parent = player.Character
-                            end
-                        end
-                    elseif player.Backpack:FindFirstChild("Punch") then
-                        player.Backpack.Punch.Parent = player.Character
-                        wait(0.01)
-                        for _, x in ipairs(player.Character:GetChildren()) do
-                            if x:IsA("Tool") and x.Name == "Punch" then
-                                x.Grip = player.Character.Torso.CFrame * CFrame.new(math.huge,math.huge,math.huge)
-                                wait(0.3)
-                                x.Parent = player.Backpack
-                                wait(0.5)
-                                x.Parent = player.Character
-                            end
-                        end
-                    end
-                end
-            end)
-
-            player.Character.Humanoid.Died:Connect(function()
-                superPunch:Set(false)
->>>>>>> a442e36e4124f6bf418b93a66d5cf7301ee0bb89
             end)
 
             local antistomp = false
             window:Toggle("Antistomp", {flag = "antistomp"}, function(value)
-<<<<<<< HEAD
                 antistomp = value
                 if antistomp then
                     repeat
@@ -672,18 +567,6 @@ do
                         end
                         wait()
                     until not antistomp
-=======
-                if value then
-                    antistomp = true
-                    if antistomp then
-                        repeat
-                            if player.Character:FindFirstChild("KO") then
-                                player.Character:findFirstChildOfClass("Humanoid"):ChangeState(7)
-                            end
-                            wait()
-                        until not antistomp
-                    end
->>>>>>> a442e36e4124f6bf418b93a66d5cf7301ee0bb89
                 end
             end)
         end
