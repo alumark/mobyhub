@@ -21,6 +21,8 @@ until game:IsLoaded()
 local players = game:GetService("Players");
 local runService = game:GetService("RunService");
 
+print("mobyhub by alumark")
+
 local player = game.Players.LocalPlayer
 local Library = loadstring(game:HttpGet("https://pastebin.com/raw/AtQAJECZ", true))()
 local OwlESP = loadstring(game:HttpGet("https://raw.githubusercontent.com/CriShoux/OwlHub/master/scripts/OwlESP.lua"))();
