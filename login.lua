@@ -26,12 +26,14 @@ local UITextSizeConstraint_3 = Instance.new("UITextSizeConstraint")
 
 local exists, data = pcall(readfile, "mobyhub.data")
 
+local CHARACTER_SEPERATOR = "\n"
+
 local savedUsername, savedPassword
 if exists then
-	local usernameEnd, passwordBegin = data:find("\n")
+	local usernameEnd, passwordBegin = data:find(CHARACTER_SEPERATOR)
 
-	savedUsername = data:sub(1, usernameEnd)
-	savedPassword = data:sub(passwordBegin)
+	savedUsername = data:sub(1, usernameEnd - CHARACTER_SEPERATOR:len())
+	savedPassword = data:sub(passwordBegin + CHARACTER_SEPERATOR:len())
 end
 
 ScreenGui.Parent = game.CoreGui
