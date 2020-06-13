@@ -21,6 +21,8 @@ until game:IsLoaded()
 local players = game:GetService("Players");
 local runService = game:GetService("RunService");
 
+local discordlink = game:HttpGet("https://mobyhub-pipeline.glitch.me/discord")
+
 print("mobyhub by alumark")
 
 local player = game.Players.LocalPlayer
@@ -202,6 +204,10 @@ do
                 for _, plr in ipairs(players:GetPlayers()) do
                     playerAdded(plr)
                 end;
+            end)
+
+            window:Button(discordlink, function()
+                setclipboard(discordlink)
             end)
         end
     end
@@ -1363,6 +1369,97 @@ do
                     end
                 end
             end)
+        end
+    end
+
+    local REASON_2_DIE = "Reason 2 Die"
+    do
+        hub:AddGame(REASON_2_DIE, {})
+        hub.games[REASON_2_DIE].InitializeUI = function(self)
+            local player = game.Players.LocalPlayer
+
+            local fireserver_original, invokeserver_original
+            local re, rf = Instance.new("RemoteEvent"), Instance.new("RemoteFunction")
+            fireserver_original = hookfunction(re.FireServer, function(self, method, ...)
+                local script = getcallingscript()
+                
+                local noob = false
+                for _, arg in ipairs({...}) do
+                    if typeof(arg) == "string" then
+                        if arg:lower():find("noobbuster") then
+                            noob = true
+                        end
+                    end
+                end
+
+                if noob then
+                    return
+                end
+                
+                if self.Name == "BooBuster" then
+                    return
+                end
+                
+                if self.Name == "FX" then
+                    return    
+                end
+                
+                if self.Name == "SelfDamage" then
+                    return    
+                end
+                
+            return fireserver_original(self, method, ...)
+            end)
+
+            local function spoof(self, returns)
+                returns[2].CLIPS = 100
+                returns[2].AMMO = 200
+                returns[2].RANGE = 9999999
+                returns[2].KICKBACK = 0
+                returns[2].ACCURACY = 9999999
+                
+                return unpack(returns)
+            end
+
+            invokeserver_original = hookfunction(rf.InvokeServer, function(self, ...)
+                if self.Name == "GetCodes" then
+                    return spoof(self, self:InvokeServer(...))
+                end
+                
+                
+                return invokeserver_original(self, ...)
+            end)
+
+            local game_metatable = getrawmetatable(game)
+            local namecall_original = game_metatable.__namecall
+            local index_original = game_metatable.__index
+
+            setreadonly(game_metatable, false)
+
+            game_metatable.__namecall = function(self, ...)
+                local method = getnamecallmethod()
+
+                if method == "Kick" and self.Name == player.Name then
+                    return
+                end
+                
+                if method == "Destroy" and self.ClassName == "ModuleScript" then
+                    return    
+                end
+                
+                if method == "FireServer" then
+                    if self.Name == "FX" then
+                        return    
+                    end
+                    
+                    if self.Name == "SelfDamage" then
+                        return    
+                    end
+                end
+                
+                return namecall_original(self, ...)
+            end
+
         end
     end
 
