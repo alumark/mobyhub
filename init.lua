@@ -209,6 +209,34 @@ do
             window:Button(discordlink, function()
                 setclipboard(discordlink)
             end)
+
+            local mouse = player:GetMouse()
+            while true do
+                wait()
+                if window.flags.triggerbot then
+                    if mouse.Target then
+                        if mouse.Target.Parent:FindFirstChildOfClass("Humanoid") or mouse.Target.Parent.Parent:FindFirstChildOfClass("Humanoid") then
+                            mouse1click()
+                        end
+                    end
+                end
+            end
+
+            local VirtualUser=game:GetService'VirtualUser'
+            game:GetService'Players'.LocalPlayer.Idled:Connect(function()
+                if window.flags.antiafk then
+                    VirtualUser:CaptureController()
+                    VirtualUser:ClickButton2(Vector2.new())
+                end
+            end)
+
+            window:Toggle("Triggerbot", {
+                flag = "triggerbot"
+            })
+
+            window:Toggle("Anti-AFK", {
+                flag = "antiafk"
+            })
         end
     end
 
