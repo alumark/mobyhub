@@ -279,7 +279,7 @@ do
                 game:GetService("UserInputService").InputBegan:Connect(function(input)
                     if self.bypass then
                         if input.KeyCode == Enum.KeyCode.LeftShift then
-                            player.Character.Humanoid.WalkSpeed = window.flags.speed        
+                            player.Character.Humanoid.WalkSpeed = self.speed      
                         end
                     end
                 end)
@@ -310,7 +310,9 @@ do
                 if self.bypass then
                     if value then
                         if not self.godConn then
+                            local hum = player.Humanoid
                             self.godConn = game:GetService("RunService").Stepped:Connect(function()
+                                hum.Health = 0
                                 for _, v in pairs(player.Character:GetChildren()) do
                                     if v.Name == "Right Leg" then
                                         v:Destroy()
@@ -509,6 +511,50 @@ do
                     end)
                 end
             end)
+
+            window:Section("Utilities")
+            pcall(function()
+                local game_metatable = getrawmetatable(game)
+                local namecall_original = game_metatable.__namecall
+
+                setreadonly(game_metatable, false)
+
+                game_metatable.__namecall = newcclosure(function(self, ...)
+                    local method = getnamecallmethod()
+                    
+                    local args = {...}
+
+                    if self.Name == "Fire" and method == "FireServer" and window.flags.aimbot then
+                        local closestCharacter, closestDistance = nil, math.huge
+                        for _, currentPlayer in ipairs(game.Players:GetPlayers()) do
+                            if currentPlayer ~= game.Players.LocalPlayer then
+                                local character = currentPlayer.Character
+                                if character then
+                                    local humanoid = character:FindFirstChildWhichIsA("Humanoid")
+                                    if humanoid and humanoid.Health > 0 then
+                                        local distance = currentPlayer.DistanceFromCharacter(currentPlayer, args[1].Position)
+                                        if distance < closestDistance then
+                                            closestCharacter, closestDistance = character, distance
+                                        end
+                                    end
+                                end
+                            end
+                        end
+                    
+                        if closestCharacter then
+                            args[1] = closestCharacter.HumanoidRootPart.CFrame
+                        end
+                        
+                        return self.FireServer(self, unpack(args))
+                    end
+                    
+                    return namecall_original(self, unpack(args)) 
+                end)
+            end)
+
+            window:Toggle("Aimbot", {
+                flag = "aimbot"
+            })
         end
     end
 
@@ -631,7 +677,7 @@ do
                                 end;
                                 local l__Position__14 = script.Parent.Handle.Position;
                                 local l__lookVector__15 = CFrame.new(l__Position__14, v7.p).lookVector;
-                                l__Projectiles__10.ProjectileRenderEvent:FireServer(0, l__LocalPlayer__2.Name, 1, l__Position__14, v7, 10000, 10000);
+                                l__Projectiles__10.ProjectileRenderEvent:FireServer(0, l__LocalPlayer__2.Name, 1, l__Position__14, v7, 20, 700);
                                 coroutine.wrap(function()
                                     local v16 = game.ReplicatedStorage.ProjectileRayGun:Clone();
                                     v16.Parent = game.Workspace;
@@ -696,47 +742,359 @@ do
                 ]])();
             end)
             
+            window:Toggle("Aimbot", {
+                flag = "aimbot"
+            })
+
+            window:Toggle("Wallbang", {
+                flag = "wallbang"
+            })
+
+            --pcall(function()
+                local game_metatable = getrawmetatable(game)
+                local namecall_original = game_metatable.__namecall
+
+                setreadonly(game_metatable, false)
+
+                local Mouse = loadstring(game:HttpGet("https://hastebin.com/raw/exalajayap", true))()
+
+                local mouse = Mouse.new()
+                local localMouse = game.Players.LocalPlayer:GetMouse()
+
+                function mouse:IgnoreCheck(hit)
+                    if window.flags.wallbang then
+                        return not hit:IsDescendantOf(workspace.Sharks)        
+                    end
+                    
+                    return false
+                end
+
+
+                game_metatable.__namecall = newcclosure(function(self, ...)
+                    local method = getnamecallmethod()
+                    
+                    local args = {...}
+
+                    if self.Name == "ProjectileRenderEvent" and method == "FireServer" and window.flags.aimbot then
+                        local closestCharacter, closestDistance = workspace.Sharks:GetChildren()[1], math.huge
+                        for _, shark in ipairs(workspace.Sharks:GetChildren()) do
+                            if shark then
+                                local pos = args[5]
+                                if typeof(pos) == "CFrame" then
+                                    pos = pos.Position
+                                end
+                                local distance = (shark.Body.Position - pos).magnitude
+                                if distance < closestDistance then
+                                    closestCharacter, closestDistance = shark, distance
+                                end
+                            end
+                        end
+                    
+                        if closestCharacter then
+                            args[5] = closestCharacter.Body.CFrame
+                        end
+                        
+                        return self.FireServer(self, unpack(args))
+                    end
+                    
+                    if method == "FindPartOnRay" and not checkcaller() and getcallingscript():IsDescendantOf(game.Players.LocalPlayer.Character) then
+                        if window.flags.wallbang then
+                            local ray = Ray.new(args[1].Origin, (mouse.Hit.p - args[1].Origin))
+                            args[1] = ray
+                        end
+
+                        if window.flags.aimbot then
+                            local closestCharacter, closestDistance = workspace.Sharks:GetChildren()[1], math.huge
+                            for _, shark in ipairs(workspace.Sharks:GetChildren()) do
+                                if shark then
+                                    local pos = localMouse.Hit.p
+                                    local distance = (shark.Body.Position - pos).magnitude
+                                    if distance < closestDistance then
+                                        closestCharacter, closestDistance = shark, distance
+                                    end
+                                end
+                            end
+                            
+                            if closestCharacter then
+                                local ray = Ray.new(args[1].Origin, (closestCharacter.Body.Position - args[1].Origin))
+                                args[1] = ray
+                            end
+                        end
+
+                        args[2] = {args[2]}
+
+                        return self.FindPartOnRayWithIgnoreList(self, unpack(args))
+                    end
+                    
+                    return namecall_original(self, unpack(args)) 
+                end)
+
+                local oldFunction
+                oldFunction = hookfunction(workspace.FindPartOnRayWithIgnoreList, newcclosure(function(self, ...)
+                    local args = {...}
+                    
+                    if window.flags.wallbang then
+                        table.insert(args[2], workspace.Terrain)
+                        table.insert(args[2], workspace.Boats)
+                        table.insert(args[2], workspace.Lobby)
+                    end
+                    
+                    return oldFunction(self, unpack(args))
+                end))
+            --end)
         end
     end
     
     local MURDER_MYSTERY_2 = "MM2"
     do
         hub:AddGame(MURDER_MYSTERY_2, {142823291})
-        hub.games[MURDER_MYSTERY_2].InitializeUI = function(self)
-            local window = Library:CreateWindow("Murder Mystery 2")
-        
-            
-        
-            while wait(0.1) do
-                for _, player in ipairs(game.Players:GetPlayers()) do
-                    local character = player.Character
-                    if character then
-                        local knife = player.Backpack:FindFirstChild("Knife") or character:FindFirstChild("Knife")
-                        local gun = (
-                            player.Backpack:FindFirstChild("Revolver") or 
-                            character:FindFirstChild("Revolver") or 
-                            player.Backpack:FindFirstChild("Gun") or 
-                            character:FindFirstChild("Gun")
-                        )
+        local MURDER_MYSTERY_2 = "MM2"
+        do
+            hub:AddGame(MURDER_MYSTERY_2, {142823291})
+            hub.games[MURDER_MYSTERY_2].InitializeUI = function(self)
+                local window = Library:CreateWindow("Murder Mystery 2")
+                
+                window:Section("Sheriff Commands")
 
-                        local colour = Color3.new(0, 1, 0)
-                        if knife then
-                            colour = Color3.new(1, 0, 0)
-                        elseif gun then
-                            colour = Color3.new(0, 0, 1)
+                local game_metatable = getrawmetatable(game)
+                local namecall_original = game_metatable.__namecall
+
+                setreadonly(game_metatable, false)
+
+                local function getMap()
+                    local map
+                
+                    for i, v in pairs(game:GetService("Workspace"):GetChildren()) do
+                        if v:IsA("Model") and v:FindFirstChild("Spawns") then
+                            map = v
+                        end
+                    end
+                
+                    return map
+                end
+
+                game_metatable.__namecall = newcclosure(function(self, ...)
+                    local method = getnamecallmethod()
+                    
+                    local args = {...}
+
+                    if self.Name == "ShootGun" and method == "InvokeServer" and window.flags.aimbot then
+                        local closestCharacter
+                        for _, currentPlayer in ipairs(game.Players:GetPlayers()) do
+                            if currentPlayer ~= game.Players.LocalPlayer then
+                                local character = currentPlayer.Character
+                                if character then
+                                    local knife = currentPlayer.Backpack:FindFirstChild("Knife") or character:FindFirstChild("Knife")
+                                    if knife then
+                                       closestCharacter = character 
+                                    end
+                                end
+                            end
+                        end
+                    
+                        if closestCharacter then
+                            args[2] = closestCharacter.HumanoidRootPart.CFrame.p
+                        end
+                        
+                        return self.InvokeServer(self, unpack(args))
+                    end
+
+                    if method == "FindPartOnRay" and not checkcaller() and getcallingscript():IsDescendantOf(game.Players.LocalPlayer.Character) then
+                        if window.flags.wallbang then
+                            local ray = Ray.new(args[1].Origin, (mouse.Hit.p - args[1].Origin))
+                            args[1] = ray
                         end
 
-                        for index, esp in pairs(tracking) do
-                            if esp.plr == player then
-                                tracking[index].espColor = colour
+                        args[2] = {args[2]}
+
+                        return self.FindPartOnRayWithIgnoreList(self, unpack(args))
+                    end
+                    
+                    return namecall_original(self, unpack(args)) 
+                end)
+
+                local oldFunction
+                oldFunction = hookfunction(workspace.FindPartOnRayWithIgnoreList, newcclosure(function(self, ...)
+                    local args = {...}
+                    
+                    if window.flags.wallbang then
+                        table.insert(args[2], getMap())
+                    end
+                    
+                    return oldFunction(self, unpack(args))
+                end))
+    
+                window:Toggle("Aimbot", {
+                    flag = "aimbot"
+                })
+
+                window:Toggle("Wallbang", {
+                    flag = "wallbang"
+                })
+    
+                fastSpawn(function()
+                    while wait(1) do
+                        for _, player in ipairs(game.Players:GetPlayers()) do
+                            local character = player.Character
+                            if character then
+                                local knife = player.Backpack:FindFirstChild("Knife") or character:FindFirstChild("Knife")
+                                local gun = (
+                                    player.Backpack:FindFirstChild("Revolver") or 
+                                    character:FindFirstChild("Revolver") or 
+                                    player.Backpack:FindFirstChild("Gun") or 
+                                    character:FindFirstChild("Gun")
+                                )
+        
+                                local colour = Color3.new(0, 1, 0)
+                                if knife then
+                                    colour = Color3.new(1, 0, 0)
+                                elseif gun then
+                                    colour = Color3.new(0, 0, 1)
+                                end
+        
+                                for index, esp in pairs(tracking) do
+                                    if esp.plr == player then
+                                        tracking[index].espColor = colour
+                                    end
+                                end
+                            end
+                        end
+                    end
+                end)
+            end
+
+
+        end
+    end
+
+    local localPlayer = game.Players.LocalPlayer
+
+    local WILD_REVOLVERS = "Wild Revolvers"
+    do
+        hub:AddGame(WILD_REVOLVERS, {983224898})
+        hub.games[WILD_REVOLVERS].InitializeUI = function(self)
+            local window = Library:CreateWindow("Wild Revolvers")
+            window:Toggle("Wallbang", {
+                flag = "wallbang"
+            })
+
+            window:Toggle("Aimbot", {
+                flag = "aimbot"
+            })
+
+            pcall(function()
+                local function getMap()
+                    local map
+                
+                    for i, v in pairs(game:GetService("Workspace"):GetChildren()) do
+                        if v:IsA("Folder") and v.Name ~= "PlayerData" and v.Name ~= "Lobbies" then
+                            map = v
+                        end
+                    end
+                
+                    return map
+                end
+                
+                local player = game.Players.LocalPlayer
+                
+                local mt = getrawmetatable(game)
+                if setreadonly then setreadonly(mt, false) else make_writeable(mt, true) end
+                local getnamecallmethod = getnamecallmethod or get_namecall_method
+                local newcclosure = newcclosure or hide_me or function(f) return f end
+                local checkcaller = checkcaller or is_protosmasher_caller or Cer.isCerus
+                local mt_namecall = mt.__namecall
+                
+                mt.__namecall = newcclosure(function(instance, ...)
+                    if not checkcaller() then
+                        
+                        if getnamecallmethod() == "FindPartOnRayWithIgnoreList" and window.flags.wallbang then
+                            local args = {...}
+                            
+                            table.insert(args[2], getMap())
+                            
+                            return instance.FindPartOnRayWithIgnoreList(instance, unpack(args))
+                        end
+                        
+                    end
+                    
+                    return mt_namecall(
+                        instance,
+                        ...
+                    )
+                end)                
+            end)
+
+            pcall(function()
+                local game_metatable = getrawmetatable(game)
+                local namecall_original = game_metatable.__namecall
+
+                setreadonly(game_metatable, false)
+
+                game_metatable.__namecall = newcclosure(function(self, ...)
+                    local method = getnamecallmethod()
+                    
+                    local args = {...}
+
+                    if self.Name == "GunFired" and method == "FireServer" and window.flags.aimbot then
+                        local closestCharacter, closestDistance = nil, math.huge
+                        for _, currentPlayer in ipairs(game.Players:GetPlayers()) do
+                            if currentPlayer ~= game.Players.LocalPlayer then
+                                local character = currentPlayer.Character
+                                if character then
+                                    local shirt = character:FindFirstChildWhichIsA("Shirt") 
+                                    local localShirt = (localPlayer.Character or localPlayer.CharacterAdded:Wait()):FindFirstChildWhichIsA("Shirt")
+                                    if shirt and localShirt then
+                                        local sameShirt = (shirt.ShirtTemplate ~= localShirt.ShirtTemplate)
+                                        if sameShirt then
+                                            local humanoid = character:FindFirstChildWhichIsA("Humanoid")
+                                            if humanoid and humanoid.Health > 0 then
+                                                local distance = currentPlayer.DistanceFromCharacter(currentPlayer, args[1].HitPosition)
+                                                if distance < closestDistance then
+                                                    closestCharacter, closestDistance = character, distance
+                                                end
+                                            end
+                                        end
+                                    end
+                                end
+                            end
+                        end
+                    
+                        if closestCharacter then
+                            args[1].HitPosition = closestCharacter.HumanoidRootPart.CFrame.p
+                        end
+                        
+                        return self.FireServer(self, unpack(args))
+                    end
+                    
+                    return namecall_original(self, unpack(args)) 
+                end)
+            end)
+
+            fastSpawn(function()
+                while wait(1) do
+                    for _, player in ipairs(game.Players:GetPlayers()) do
+                        local character = player.Character
+                        if character then
+                            local colour = Color3.new(0, 1, 0)
+                            
+                            pcall(function()
+                                if character:FindFirstChildWhichIsA("Shirt").ShirtTemplate ~= localPlayer.Character:FindFirstChildWhichIsA("Shirt").ShirtTemplate then
+                                    colour = Color3.new(1, 0, 0)
+                                end
+                            end)
+    
+                            for index, esp in pairs(tracking) do
+                                if esp.plr == player then
+                                    tracking[index].espColor = colour
+                                end
                             end
                         end
                     end
                 end
-            end
+            end)
         end
     end
 
-    hub:OpenGame(game.PlaceId)
     hub:OpenGame(0)
+    hub:OpenGame(game.PlaceId)
 end
