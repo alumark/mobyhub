@@ -32,7 +32,7 @@ local savedUsername, savedPassword
 if exists then
 	local usernameEnd, passwordBegin = data:find(CHARACTER_SEPERATOR)
 
-	savedUsername = data:sub(1, usernameEnd - CHARACTER_SEPERATOR:len())
+	savedUsername = data:sub(1, usernameEnd - CHARACTER_SEPERATOR:len() - 1)
 	savedPassword = data:sub(passwordBegin + CHARACTER_SEPERATOR:len())
 end
 
