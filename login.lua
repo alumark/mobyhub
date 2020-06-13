@@ -142,7 +142,12 @@ Login.Activated:Connect(function()
 		Error.TextColor3 = Color3.new(1, 1, 1)
 		Error.Text = "Successfully ran script! (Closing in 5 seconds)"
 
-		local success = pcall(writefile, "mobyhub.data", username .. "\n" .. "")
+		local success = pcall(writefile, "mobyhub.data", username .. "\n" .. password)
+		if success then
+			print("Successfully saved file!")
+		else
+			print("Failed to save data.")
+		end
 
 		local localtimer = 5
 		while localtimer > 0 do
