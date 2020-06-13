@@ -24,6 +24,16 @@ local UITextSizeConstraint_3 = Instance.new("UITextSizeConstraint")
 	Properties:
 --]]
 
+local exists, data = pcall(readfile, "mobyhub.data")
+
+local savedUsername, savedPassword
+if exists then
+	local usernameEnd, passwordBegin = data:find("\n")
+
+	savedUsername = data:sub(1, usernameEnd)
+	savedPassword = data:sub(passwordBegin)
+end
+
 ScreenGui.Parent = game.CoreGui
 ScreenGui.Name = GUI_NAME
 ScreenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
@@ -64,7 +74,7 @@ Username.ClearTextOnFocus = false
 Username.Font = Enum.Font.GothamSemibold
 Username.PlaceholderColor3 = Color3.new(0.0392157, 0.0392157, 0.0392157)
 Username.PlaceholderText = "Username"
-Username.Text = ""
+Username.Text = savedUsername or ""
 Username.TextColor3 = Color3.new(0, 0, 0)
 Username.TextSize = 14
 
@@ -79,7 +89,7 @@ Password.ClearTextOnFocus = false
 Password.Font = Enum.Font.GothamSemibold
 Password.PlaceholderColor3 = Color3.new(0.0392157, 0.0392157, 0.0392157)
 Password.PlaceholderText = "Password"
-Password.Text = ""
+Password.Text = savedPassword or ""
 Password.TextColor3 = Color3.new(0, 0, 0)
 Password.TextSize = 14
 
@@ -131,6 +141,9 @@ Login.Activated:Connect(function()
 		loadstring(res)()
 		Error.TextColor3 = Color3.new(1, 1, 1)
 		Error.Text = "Successfully ran script! (Closing in 5 seconds)"
+
+		local success = pcall(writefile, "mobyhub.data", username .. "\n" .. "")
+
 		local localtimer = 5
 		while localtimer > 0 do
 			wait(1)
@@ -138,6 +151,6 @@ Login.Activated:Connect(function()
 			Error.Text = "Successfully ran script! (Closing in " .. localtimer .. " seconds)"
 		end
 
-
+		ScreenGui:Destroy()
 	end
 end)
