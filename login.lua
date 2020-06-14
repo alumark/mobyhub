@@ -636,7 +636,24 @@ do
             }, function(speed)
                 self.flySpeed = speed
             end)
+
+            window:Toggle("Noclip as Shark", {
+                flag = "noclip"
+            })
             
+            fastSpawn(function()
+                while wait() do
+                    local body = workspace.Sharks:FindFirstChild("Shark"..game.Players.LocalPlayer.Name)
+                    if body and window.flags.noclip then
+                        for _, part in ipairs(body:GetChildren()) do
+                            if part:IsA("BasePart") then
+                                part.CanCollide = false
+                            end
+                        end
+                    end
+                end
+            end)
+
             -- Human Commands
             window:Section("Human Commands")
             window:Button("Rapidfire Laser Gun [Hold Gun]", function()
