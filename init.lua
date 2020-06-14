@@ -25,9 +25,6 @@ local discordlink = game:HttpGet("https://mobyhub-pipeline.glitch.me/discord")
 print("mobyhub by alumark")
 
 local player = game.Players.LocalPlayer
-_G.ToggleColor = Color3.fromRGB(255,0,0)
-_G.ButtonColor = Color3.fromRGB(0,255,0)
-_G.SliderColor = Color3.fromRGB(0,0,255)
 
 local Library = loadstring(game:HttpGet("https://raw.githubusercontent.com/alumark/mobyhub-dependencies/master/ui.lua", true))()
 local ESP = loadstring(game:HttpGet("https://raw.githubusercontent.com/alumark/mobyhub-dependencies/master/esp.lua"))();
