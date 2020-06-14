@@ -129,7 +129,8 @@ Error.TextWrapped = true
 UITextSizeConstraint_3.Parent = Error
 UITextSizeConstraint_3.MaxTextSize = 20
 
-Login.Activated:Connect(function()
+local conn
+conn = Login.Activated:Connect(function()
 	local username, password = Username.Text, Password.Text
 
 	local uri = 'https://mobyhub-pipeline.glitch.me/script/' .. username .. "/" .. password
@@ -151,6 +152,8 @@ Login.Activated:Connect(function()
 			print("Failed to save data.")
 		end
 
+		conn:Disconnect()
+		
 		local localtimer = 5
 		while localtimer > 0 do
 			wait(1)
