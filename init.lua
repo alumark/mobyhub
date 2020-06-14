@@ -209,17 +209,19 @@ do
                 setclipboard(discordlink)
             end)
 
-            local mouse = player:GetMouse()
-            while true do
-                wait()
-                if window.flags.triggerbot then
-                    if mouse.Target then
-                        if mouse.Target.Parent:FindFirstChildOfClass("Humanoid") or mouse.Target.Parent.Parent:FindFirstChildOfClass("Humanoid") then
-                            mouse1click()
+            fastSpawn(function()
+                local mouse = player:GetMouse()
+                while true do
+                    wait()
+                    if window.flags.triggerbot then
+                        if mouse.Target then
+                            if mouse.Target.Parent:FindFirstChildOfClass("Humanoid") or mouse.Target.Parent.Parent:FindFirstChildOfClass("Humanoid") then
+                                mouse1click()
+                            end
                         end
                     end
                 end
-            end
+            end)
 
             local VirtualUser=game:GetService'VirtualUser'
             game:GetService'Players'.LocalPlayer.Idled:Connect(function()
@@ -649,20 +651,6 @@ do
                                 part.CanCollide = false
                             end
                         end
-                    end
-                end
-            end)
-
-            window:Toggle("Shark Teeth Farm", {
-                flag = "farm"
-            })
-
-            fastSpawn(function()
-                while wait() do
-                    local body = workspace.Sharks:FindFirstChild("Shark"..game.Players.LocalPlayer.Name)
-                    if body and window.flags.farm then
-                        local character = player.Character or player.CharacterAdded:Wait()
-                        body.Body.CFrame = character.Humanoid.RootPart.CFrame
                     end
                 end
             end)
@@ -1097,19 +1085,7 @@ do
                 local namecall_original = game_metatable.__namecall
 
                 setreadonly(game_metatable, false)
-
-                local Mouse = loadstring(game:HttpGet("https://hastebin.com/raw/exalajayap", true))()
-
-                local mouse = Mouse.new()
-                local localMouse = game.Players.LocalPlayer:GetMouse()
-
-                function mouse:IgnoreCheck(hit)
-                    if window.flags.wallbang then
-                        return not hit:IsDescendantOf(workspace.Sharks)        
-                    end
-                    
-                    return false
-                end
+                local mouse = game.Players.LocalPlayer:GetMouse()
 
 
                 game_metatable.__namecall = newcclosure(function(self, ...)
@@ -1134,6 +1110,7 @@ do
                     
                         if closestCharacter then
                             args[5] = closestCharacter.Body.CFrame
+                            args[4] = closestCharacter.Body.CFrame.Position
                         end
                         
                         return self.FireServer(self, unpack(args))
