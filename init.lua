@@ -26,7 +26,11 @@ local discordlink = game:HttpGet("https://mobyhub-pipeline.glitch.me/discord")
 print("mobyhub by alumark")
 
 local player = game.Players.LocalPlayer
-local Library = loadstring(game:HttpGet("https://pastebin.com/raw/AtQAJECZ", true))()
+_G.ToggleColor = Color3.fromRGB(255,0,0)
+_G.ButtonColor = Color3.fromRGB(0,255,0)
+_G.SliderColor = Color3.fromRGB(0,0,255)
+
+local library = loadstring(game:HttpGet(('https://pastebin.com/raw/FsJak6AT')))()
 local OwlESP = loadstring(game:HttpGet("https://raw.githubusercontent.com/CriShoux/OwlHub/master/scripts/OwlESP.lua"))();
 
 local GripOnOff = false
@@ -636,13 +640,46 @@ do
             }, function(speed)
                 self.flySpeed = speed
             end)
+
+            window:Toggle("Noclip as Shark", {
+                flag = "noclip"
+            })
             
+            fastSpawn(function()
+                while wait() do
+                    local body = workspace.Sharks:FindFirstChild("Shark"..game.Players.LocalPlayer.Name)
+                    if body and window.flags.noclip then
+                        for _, part in ipairs(body:GetChildren()) do
+                            if part:IsA("BasePart") then
+                                part.CanCollide = false
+                            end
+                        end
+                    end
+                end
+            end)
+
+            window:Toggle("Shark Teeth Farm", {
+                flag = "farm"
+            })
+
+            fastSpawn(function()
+                while wait() do
+                    local body = workspace.Sharks:FindFirstChild("Shark"..game.Players.LocalPlayer.Name)
+                    if body and window.flags.farm then
+                        local character = player.Character or player.CharacterAdded:Wait()
+                        body.Body.CFrame = character.Humanoid.RootPart.CFrame
+                    end
+                end
+            end)
+
             -- Human Commands
             window:Section("Human Commands")
             window:Button("Rapidfire Laser Gun [Hold Gun]", function()
                loadstring([[
                     local weapon = game.Players.LocalPlayer.Character:FindFirstChildOfClass("Tool")
-                    weapon:FindFirstChildOfClass("LocalScript"):Destroy()
+                    if weapon:FindFirstChildOfClass("LocalScript") then
+                        weapon:FindFirstChildOfClass("LocalScript"):Destroy()
+                    end
                     script.Parent = weapon
                     
                     local l__RenderStepped__1 = game:GetService("RunService").RenderStepped;
@@ -711,7 +748,7 @@ do
                                 end;
                                 local l__Position__14 = script.Parent.Handle.Position;
                                 local l__lookVector__15 = CFrame.new(l__Position__14, v7.p).lookVector;
-                                l__Projectiles__10.ProjectileRenderEvent:FireServer(0, l__LocalPlayer__2.Name, 1, l__Position__14, v7, 20, 700);
+                                l__Projectiles__10.ProjectileRenderEvent:FireServer(10, l__LocalPlayer__2.Name, 20, l__Position__14, v7, 20, 700);
                                 coroutine.wrap(function()
                                     local v16 = game.ReplicatedStorage.ProjectileRayGun:Clone();
                                     v16.Parent = game.Workspace;
@@ -779,7 +816,9 @@ do
             window:Button("Godmode Gun [Hold Gun]", function()
                 loadstring([[
                      local weapon = game.Players.LocalPlayer.Character:FindFirstChildOfClass("Tool")
-                     weapon:FindFirstChildOfClass("LocalScript"):Destroy()
+                     if weapon:FindFirstChildOfClass("LocalScript") then
+                        weapon:FindFirstChildOfClass("LocalScript"):Destroy()
+                    end
                      script.Parent = weapon
                      
                      local l__RenderStepped__1 = game:GetService("RunService").RenderStepped;
@@ -917,6 +956,9 @@ do
                 loadstring([[
                      local weapon = game.Players.LocalPlayer.Character:FindFirstChildOfClass("Tool")
                      weapon:FindFirstChildOfClass("LocalScript"):Destroy()
+                     if weapon:FindFirstChildOfClass("LocalScript") then
+                        weapon:FindFirstChildOfClass("LocalScript"):Destroy()
+                    end
                      script.Parent = weapon
                      
                      local l__RenderStepped__1 = game:GetService("RunService").RenderStepped;
