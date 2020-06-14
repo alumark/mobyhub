@@ -29,8 +29,8 @@ _G.ToggleColor = Color3.fromRGB(255,0,0)
 _G.ButtonColor = Color3.fromRGB(0,255,0)
 _G.SliderColor = Color3.fromRGB(0,0,255)
 
-local Library = loadstring(game:HttpGet("https://pastebin.com/raw/AtQAJECZ", true))()
-local OwlESP = loadstring(game:HttpGet("https://raw.githubusercontent.com/CriShoux/OwlHub/master/scripts/OwlESP.lua"))();
+local Library = loadstring(game:HttpGet("https://raw.githubusercontent.com/alumark/mobyhub-dependencies/master/ui.lua", true))()
+local ESP = loadstring(game:HttpGet("https://raw.githubusercontent.com/alumark/mobyhub-dependencies/master/esp.lua"))();
 
 local GripOnOff = false
 local DupeOnOff = false
@@ -117,7 +117,6 @@ do
 end
 
 local tracking = {};
-local playerColours = {};
 
 local hub = Hub.new()
 do
@@ -144,14 +143,16 @@ do
 
             local function characterAdded(plr)
                 local char = plr.Character;
-                char:WaitForChild("HumanoidRootPart"); 
+                local rootPart = char:WaitForChild("HumanoidRootPart"); 
                 char:WaitForChild("Head");
-                tracking[#tracking + 1] = OwlESP.new({
+                tracking[#tracking + 1] = ESP.new({
                     plr = plr,
+                    part = rootPart,
+                    text = plr.Name,
                     espBoxVisible = self.espEnabled,
                     tracerVisible = self.tracersEnabled,
                     text = plr.Name,
-                    teamCheck = teamCheck,
+                    teamCheck = false,
                     espColor = espColor
                 });
             end;
@@ -171,11 +172,6 @@ do
 
             runService.RenderStepped:Connect(function()
                 for _, v in ipairs(tracking) do
-                    if (#game.Teams:GetTeams() <= 0) then
-                        teamCheck = false;
-                    else
-                        teamCheck = true;
-                    end
                     v:update();
                 end;
             end);
@@ -1535,4 +1531,5 @@ do
     hub:OpenGame(0)
     hub:OpenGame(game.PlaceId)
 end
+ 
  
