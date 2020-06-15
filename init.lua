@@ -1261,7 +1261,7 @@ do
                     if not player.Backpack:FindFirstChild("Knife") or not player.Character:FindFirstChild("Knife") then
                         local lastCFrame = player.Character.HumanoidRootPart.CFrame
                         player.Character.HumanoidRootPart.CFrame = child.CFrame
-                        wait(0.1)
+                        wait()
                         player.Character.HumanoidRootPart.CFrame = lastCFrame
                     end
                 end
@@ -1305,7 +1305,7 @@ do
                 self.colours.Murderer = color
             end)
 
-            render:ColorPicker("Gun ESP Color", Color3.fromRGB(243, 1, 1), function(color)
+            render:ColorPicker("Gun ESP Color", Color3.fromRGB(1, 66, 243), function(color)
                 self.colours.GunDrop = color
             end)
 
