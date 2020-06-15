@@ -1247,7 +1247,6 @@ do
             local player = game.Players.LocalPlayer
             workspace.ChildAdded:Connect(function(child)
                 if child.Name == "GunDrop" then
-
                     if not gunESP then
                         gunESP = ESP.new({
                             part = child,
@@ -1277,7 +1276,7 @@ do
             end)
 
             workspace.ChildRemoved:Connect(function(child)
-                if child.Name == "GunDrop" and self.teleportToGun then
+                if child.Name == "GunDrop" then
                     if gunESP then
                         gunESP = gunESP:remove()
                     end
