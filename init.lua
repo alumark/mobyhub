@@ -29,8 +29,6 @@ local player = game.Players.LocalPlayer
 local Library = loadstring(game:HttpGet("https://raw.githubusercontent.com/alumark/mobyhub-dependencies/master/ui.lua", true))()
 local ESP = loadstring(game:HttpGet("https://raw.githubusercontent.com/alumark/mobyhub-dependencies/master/esp.lua", true))()
 
-print(ESP)
-
 local GripOnOff = false
 local DupeOnOff = false
 local antiknock = false
