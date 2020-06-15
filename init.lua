@@ -116,7 +116,7 @@ end
 local tracking = {};
 
 local espEnabled = false
-localm tracersEnabled = false
+local tracersEnabled = false
 
 local hub = Hub.new()
 do
