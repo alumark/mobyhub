@@ -554,12 +554,12 @@ do
 
                 setreadonly(game_metatable, false)
 
-                game_metatable.__namecall = newcclosure(function(self, ...)
+                game_metatable.__namecall = newcclosure(function(instance, ...)
                     local method = getnamecallmethods()
                     
                     local args = {...}
 
-                    if self.Name == "Fire" and method == "FireServer" and self.aimbot then
+                    if instance.Name == "Fire" and method == "FireServer" and self.aimbot then
                         local closestCharacter, closestDistance = nil, math.huge
                         for _, currentPlayer in ipairs(game.Players:GetPlayers()) do
                             if currentPlayer ~= game.Players.LocalPlayer then
@@ -580,10 +580,10 @@ do
                             args[1] = closestCharacter.HumanoidRootPart.CFrame
                         end
                         
-                        return self.FireServer(self, unpack(args))
+                        return instance.FireServer(instance, unpack(args))
                     end
                     
-                    return namecall_original(self, unpack(args)) 
+                    return namecall_original(instance, unpack(args)) 
                 end)
             end)
 
@@ -1109,12 +1109,12 @@ do
             local mouse = game.Players.LocalPlayer:GetMouse()
 
 
-            game_metatable.__namecall = newcclosure(function(self, ...)
+            game_metatable.__namecall = newcclosure(function(instance, ...)
                 local method = getnamecallmethod()
                 
                 local args = {...}
 
-                if self.Name == "ProjectileRenderEvent" and method == "FireServer" and self.aimbot then
+                if instance.Name == "ProjectileRenderEvent" and method == "FireServer" and self.aimbot then
                     local closestCharacter, closestDistance = workspace.Sharks:GetChildren()[1], math.huge
                     for _, shark in ipairs(workspace.Sharks:GetChildren()) do
                         if shark then
@@ -1134,7 +1134,7 @@ do
                         args[4] = closestCharacter.Body.CFrame.Position
                     end
                     
-                    return self.FireServer(self, unpack(args))
+                    return instance.FireServer(instance, unpack(args))
                 end
                 
                 if method == "FindPartOnRay" and not checkcaller() and getcallingscript():IsDescendantOf(game.Players.LocalPlayer.Character) then
@@ -1163,14 +1163,14 @@ do
 
                     args[2] = {args[2]}
 
-                    return self.FindPartOnRayWithIgnoreList(self, unpack(args))
+                    return instance.FindPartOnRayWithIgnoreList(instance, unpack(args))
                 end
                 
-                return namecall_original(self, unpack(args)) 
+                return namecall_original(instance, unpack(args)) 
             end)
 
             local oldFunction
-            oldFunction = hookfunction(workspace.FindPartOnRayWithIgnoreList, newcclosure(function(self, ...)
+            oldFunction = hookfunction(workspace.FindPartOnRayWithIgnoreList, newcclosure(function(instance, ...)
                 local args = {...}
                 
                 if self.wallbang then
@@ -1179,7 +1179,7 @@ do
                     table.insert(args[2], workspace.Lobby)
                 end
                 
-                return oldFunction(self, unpack(args))
+                return oldFunction(instance, unpack(args))
             end))
         end
     end
@@ -1209,12 +1209,12 @@ do
                 return map
             end
 
-            game_metatable.__namecall = newcclosure(function(self, ...)
+            game_metatable.__namecall = newcclosure(function(instance, ...)
                 local method = getnamecallmethod()
                 
                 local args = {...}
 
-                if self.Name == "ShootGun" and method == "InvokeServer" and self.aimbot then
+                if seinstancelf.Name == "ShootGun" and method == "InvokeServer" and self.aimbot then
                     local closestCharacter
                     for _, currentPlayer in ipairs(game.Players:GetPlayers()) do
                         if currentPlayer ~= game.Players.LocalPlayer then
@@ -1232,10 +1232,10 @@ do
                         args[2] = closestCharacter.HumanoidRootPart.CFrame.p
                     end
                     
-                    return self.InvokeServer(self, unpack(args))
+                    return instance.InvokeServer(instance, unpack(args))
                 end
 
-                return namecall_original(self, unpack(args)) 
+                return namecall_original(instance, unpack(args)) 
             end)
 
             sheriffCommands:Toggle("Aimbot", function(bool)
@@ -1407,12 +1407,12 @@ do
 
                 setreadonly(game_metatable, false)
 
-                game_metatable.__namecall = newcclosure(function(self, ...)
+                game_metatable.__namecall = newcclosure(function(instance, ...)
                     local method = getnamecallmethod()
                     
                     local args = {...}
 
-                    if self.Name == "GunFired" and method == "FireServer" and self.aimbot then
+                    if instance.Name == "GunFired" and method == "FireServer" and self.aimbot then
                         local closestCharacter, closestDistance = nil, math.huge
                         for _, currentPlayer in ipairs(game.Players:GetPlayers()) do
                             if currentPlayer ~= game.Players.LocalPlayer then
@@ -1440,10 +1440,10 @@ do
                             args[1].HitPosition = closestCharacter.HumanoidRootPart.CFrame.p
                         end
                         
-                        return self.FireServer(self, unpack(args))
+                        return self.FireServer(instance, unpack(args))
                     end
                     
-                    return namecall_original(self, unpack(args)) 
+                    return namecall_original(instance, unpack(args)) 
                 end)
             end)
 
@@ -1511,7 +1511,7 @@ do
             return fireserver_original(self, method, ...)
             end)
 
-            local function spoof(self, returns)
+            local function spoof(instance, returns)
                 returns[2].CLIPS = 100
                 returns[2].AMMO = 200
                 returns[2].RANGE = 9999999
@@ -1521,13 +1521,13 @@ do
                 return unpack(returns)
             end
 
-            invokeserver_original = hookfunction(rf.InvokeServer, function(self, ...)
-                if self.Name == "GetCodes" then
-                    return spoof(self, self:InvokeServer(...))
+            invokeserver_original = hookfunction(rf.InvokeServer, function(instance, ...)
+                if instance.Name == "GetCodes" then
+                    return spoof(instance, instance:InvokeServer(...))
                 end
                 
                 
-                return invokeserver_original(self, ...)
+                return invokeserver_original(instance, ...)
             end)
 
             local game_metatable = getrawmetatable(game)
@@ -1536,14 +1536,14 @@ do
 
             setreadonly(game_metatable, false)
 
-            game_metatable.__namecall = function(self, ...)
+            game_metatable.__namecall = function(instance, ...)
                 local method = getnamecallmethod()
 
-                if method == "Kick" and self.Name == player.Name then
+                if method == "Kick" and instance.Name == player.Name then
                     return
                 end
                 
-                if method == "Destroy" and self.ClassName == "ModuleScript" then
+                if method == "Destroy" and instance.ClassName == "ModuleScript" then
                     return    
                 end
                 
@@ -1557,7 +1557,7 @@ do
                     end
                 end
                 
-                return namecall_original(self, ...)
+                return namecall_original(instance, ...)
             end
 
         end
