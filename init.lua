@@ -1288,7 +1288,7 @@ do
             end)
 
             self.colours = {
-                Innocent = Color3.fromRGB(0, 255, 34),
+                Innocent = Color3.fromRGB(0, 255, 0),
                 Sheriff = Color3.fromRGB(1, 66, 243),
                 Murderer = Color3.fromRGB(243, 1, 1),
                 GunDrop = Color3.fromRGB(255, 0, 255)
