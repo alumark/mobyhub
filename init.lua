@@ -617,9 +617,6 @@ do
                         esp:remove()
                     end
                     sharkTracking = {}
-                    if player.Team == game.Teams.Survivor then
-                        tracking = {}
-                    end
 
                     for _, shark in pairs(workspace.Sharks:GetChildren()) do
                         local text = shark.Name:sub(("SHARK_"):len())
