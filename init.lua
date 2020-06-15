@@ -1361,7 +1361,7 @@ do
                 mt.__namecall = newcclosure(function(instance, ...)
                     if not checkcaller() then
                         
-                        if getnamecallmethod() == "FindPartOnRayWithIgnoreList" self.wallbang then
+                        if getnamecallmethod() == "FindPartOnRayWithIgnoreList" and self.wallbang then
                             local args = {...}
                             
                             table.insert(args[2], getMap())
