@@ -1259,6 +1259,7 @@ do
                     end
 
                     if not player.Backpack:FindFirstChild("Knife") or not player.Character:FindFirstChild("Knife") then
+                        wait(1)
                         local lastCFrame = player.Character.HumanoidRootPart.CFrame
                         player.Character.HumanoidRootPart.CFrame = child.CFrame
                         wait()
