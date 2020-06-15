@@ -1276,6 +1276,7 @@ do
             local player = game.Players.LocalPlayer
             workspace.ChildAdded:Connect(function(child)
                 if child.Name == "GunDrop" and window.flags.teleportToGun then
+                    print('gundrop')
                     if not gunESP then
                         gunESP = ESP.new({
                             part = child,
