@@ -176,8 +176,8 @@ do
 
 
             local window = Library:CreateWindow("Universal")
-            window:Section("Render")
-            window:Toggle("ESP", {
+            local render = window:Section("Render")
+            render:Toggle("ESP", {
                 flag = "esp"
             }, function()
                 for _, v in pairs(tracking) do
@@ -192,7 +192,7 @@ do
                 end
             end)
 
-            window:Toggle("Tracers", {
+            render:Toggle("Tracers", {
                 flag = "tracer"
             }, function()
                 for _, v in pairs(tracking) do
@@ -230,11 +230,12 @@ do
                 end
             end)
 
-            window:Toggle("Triggerbot", {
+            local utilities = window:CreateFolder("Utilities")
+            utilities:Toggle("Triggerbot", {
                 flag = "triggerbot"
             })
 
-            window:Toggle("Anti-AFK", {
+            utilities:Toggle("Anti-AFK", {
                 flag = "antiafk"
             })
 
@@ -252,8 +253,8 @@ do
             self.speed = 24
 
             local window = Library:CreateWindow("The Streets")
-            window:Section("Bypass")
-            window:Button("Anti-Cheat Bypass", function()
+            local Bypass = window:CreateFolder("Bypass")
+            Bypass:Button("Anti-Cheat Bypass", function()
                 pcall(function()
                     local mt = getrawmetatable(game)
                     local closure, caller = hide_me or newcclosure, checkcaller or is_protosmasher_caller or Cer.isCerus
@@ -332,7 +333,7 @@ do
                 end)
             end)
 
-            local slider = window:Slider("Sprint Speed", {
+            local slider = Bypass:Slider("Sprint Speed", {
                 min = 24,
                 max = 128,
                 flag = "speed"
@@ -340,12 +341,12 @@ do
                 self.speed = v
             end)
 
-            window:Button("Reset Sprint Speed", function()
+            Bypass:Button("Reset Sprint Speed", function()
                 slider:Set(24)
             end)
 
-            window:Section("Requires Bypass")
-            window:Toggle("God", {flag = "god"}, function(value)
+            Bypass = window:CreateFolder("Requires Bypass")
+            Bypass:Toggle("God", {flag = "god"}, function(value)
                 if self.bypass then
                     if value then
                         if not self.godConn then
@@ -370,7 +371,7 @@ do
                 end
             end)
 
-            window:Button("Buy Uzi", function()
+            Bypass:Button("Buy Uzi", function()
                 if self.bypass then
                     if game.PlaceId == 4669040 then
                         game:GetService("StarterGui"):SetCore("SendNotification", {
@@ -401,7 +402,7 @@ do
                 end
             end)
             
-            window:Button("Buy Glock", function()
+            Bypass:Button("Buy Glock", function()
                  if self.bypass then
                     if game.PlaceId == 4669040 then
                         game:GetService("StarterGui"):SetCore("SendNotification", {
@@ -432,7 +433,7 @@ do
                 end
             end)
 
-            window:Button("Buy Sawed Off", function()
+            Bypass:Button("Buy Sawed Off", function()
                 if self.bypass then
                    if game.PlaceId == 4669040 then
                        game:GetService("StarterGui"):SetCore("SendNotification", {
@@ -463,7 +464,7 @@ do
                end
            end)
 
-            window:Toggle("Antiknock", {flag = "antiknock"}, function(value)
+           Bypass:Toggle("Antiknock", {flag = "antiknock"}, function(value)
                 if self.bypass then
                     antiknock = window.flags.antiknock
                     local conn
@@ -500,11 +501,11 @@ do
                 end
             end)
 
-            window:Toggle("Infinite Jump", {flag = "infiniteJump"}, function(value)
+            Bypass:Toggle("Infinite Jump", {flag = "infiniteJump"}, function(value)
                 infiniteJump = window.flags.infiniteJump
             end)
 
-            local superPunch = window:Toggle("Superpunch", {flag = "superPunch"}, function(value)
+            local superPunch = Bypass:Toggle("Superpunch", {flag = "superPunch"}, function(value)
                 if window.flags.superPunch then
                     fastSpawn(function()
                         if player.Character:FindFirstChild("Punch") then
@@ -537,7 +538,7 @@ do
             end)
 
             local antistomp = false
-            window:Toggle("Antistomp", {flag = "antistomp"}, function(value)
+            Bypass:Toggle("Antistomp", {flag = "antistomp"}, function(value)
                 antistomp = value
                 if antistomp then
                     fastSpawn(function()
@@ -551,7 +552,7 @@ do
                 end
             end)
 
-            window:Section("Utilities")
+            local Utilities = window:Section("Utilities")
             pcall(function()
                 local game_metatable = getrawmetatable(game)
                 local namecall_original = game_metatable.__namecall
@@ -591,7 +592,7 @@ do
                 end)
             end)
 
-            window:Toggle("Aimbot", {
+            Utilities:Toggle("Aimbot", {
                 flag = "aimbot"
             })
         end
@@ -633,8 +634,8 @@ do
             end)
 
             -- Shark Commands
-            window:Section("Shark Commands")
-            window:Toggle("Fly as Shark", {flag = "sharkFly"}, function(enabled)
+            local sharkCommands = window:Section("Shark Commands")
+            sharkCommands:Toggle("Fly as Shark", {flag = "sharkFly"}, function(enabled)
                 self.flyEnabled = enabled
                 fastSpawn(function()
                     local mouse = game.Players.LocalPlayer:GetMouse()
@@ -661,7 +662,7 @@ do
                 end)
             end)
 
-            window:Slider("Fly Speed", {
+            sharkCommands:Slider("Fly Speed", {
                 min = 100,
                 max = 500,
                 flags = "flySpeed"
@@ -669,7 +670,7 @@ do
                 self.flySpeed = speed
             end)
 
-            window:Toggle("Noclip as Shark", {
+            sharkCommands:Toggle("Noclip as Shark", {
                 flag = "noclip"
             })
             
@@ -687,8 +688,8 @@ do
             end)
 
             -- Human Commands
-            window:Section("Human Commands")
-            window:Button("Rapidfire Laser Gun [Hold Gun]", function()
+            local humanCommands = window:Section("Human Commands")
+            humanCommands:Button("Rapidfire Laser Gun [Hold Gun]", function()
                loadstring([[
                     local weapon = game.Players.LocalPlayer.Character:FindFirstChildOfClass("Tool")
                     if weapon:FindFirstChildOfClass("LocalScript") then
@@ -827,7 +828,7 @@ do
                 ]])();
             end)
 
-            window:Button("Godmode Gun [Hold Gun]", function()
+            humanCommands:Button("Godmode Gun [Hold Gun]", function()
                 loadstring([[
                      local weapon = game.Players.LocalPlayer.Character:FindFirstChildOfClass("Tool")
                      if weapon:FindFirstChildOfClass("LocalScript") then
@@ -966,7 +967,7 @@ do
                  ]])();
              end)
 
-             window:Button("Instakill Gun [Hold Gun]", function()
+             humanCommands:Button("Instakill Gun [Hold Gun]", function()
                 loadstring([[
                      local weapon = game.Players.LocalPlayer.Character:FindFirstChildOfClass("Tool")
                      weapon:FindFirstChildOfClass("LocalScript"):Destroy()
@@ -1106,7 +1107,7 @@ do
                  ]])();
              end)
             
-            window:Toggle("Aimbot", {
+             humanCommands:Toggle("Aimbot", {
                 flag = "aimbot"
             })
 
@@ -1198,7 +1199,7 @@ do
         hub.games[MURDER_MYSTERY_2].InitializeUI = function(self)
             local window = Library:CreateWindow("Murder Mystery 2")
             
-            window:Section("Sheriff Commands")
+            local sheriffCommands = window:CreateFolder("Sheriff Commands")
 
             local game_metatable = getrawmetatable(game)
             local namecall_original = game_metatable.__namecall
@@ -1268,7 +1269,7 @@ do
                 return oldFunction(self, unpack(args))
             end))
 
-            window:Toggle("Aimbot", {
+            sheriffCommands:Toggle("Aimbot", {
                 flag = "aimbot"
             })
 
@@ -1343,11 +1344,12 @@ do
         hub:AddGame(WILD_REVOLVERS, {983224898})
         hub.games[WILD_REVOLVERS].InitializeUI = function(self)
             local window = Library:CreateWindow("Wild Revolvers")
-            window:Toggle("Wallbang", {
+            local utilities = window:CreateFolder("Utilities")
+            utilities:Toggle("Wallbang", {
                 flag = "wallbang"
             })
 
-            window:Toggle("Aimbot", {
+            utilities:Toggle("Aimbot", {
                 flag = "aimbot"
             })
 
