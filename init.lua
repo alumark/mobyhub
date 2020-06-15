@@ -1235,30 +1235,8 @@ do
                     return self.InvokeServer(self, unpack(args))
                 end
 
-                if method == "FindPartOnRay" and not checkcaller() and getcallingscript():IsDescendantOf(game.Players.LocalPlayer.Character) then
-                    if self.wallbang then
-                        local ray = Ray.new(args[1].Origin, (mouse.Hit.p - args[1].Origin))
-                        args[1] = ray
-                    end
-
-                    args[2] = {args[2]}
-
-                    return self.FindPartOnRayWithIgnoreList(self, unpack(args))
-                end
-                
                 return namecall_original(self, unpack(args)) 
             end)
-
-            local oldFunction
-            oldFunction = hookfunction(workspace.FindPartOnRayWithIgnoreList, newcclosure(function(self, ...)
-                local args = {...}
-                
-                if self.wallbang then
-                    table.insert(args[2], getMap())
-                end
-                
-                return oldFunction(self, unpack(args))
-            end))
 
             sheriffCommands:Toggle("Aimbot", function(bool)
                 self.aimbot = bool
@@ -1268,7 +1246,6 @@ do
             local player = game.Players.LocalPlayer
             workspace.ChildAdded:Connect(function(child)
                 if child.Name == "GunDrop" and self.teleportToGun then
-                    print('gundrop')
                     if not gunESP then
                         gunESP = ESP.new({
                             part = child,
@@ -1277,24 +1254,61 @@ do
                             tracerVisible = tracerEnabled,
                             text = "Gun",
                             teamCheck = false,
-                            espColor = Color3.new(0, 0, 1)
+                            espColor = self.colors[child.Name]
                         })
                     end
-                    player.Character:MoveTo(child.Position)
+
+                    if not player.Backpack:FindFirstChild("Knife") or not player.Character:FindFirstChild("Knife") then
+                        local lastCFrame = player.Character.HumanoidRootPart.CFrame
+                        player.Character.HumanoidRootPart.CFrame = child.CFrame
+                        wait(0.1)
+                        player.Character.HumanoidRootPart.CFrame = lastCFrame
+                    end
                 end
             end)
 
             workspace.ChildRemoved:Connect(function(child)
                 if child.Name == "GunDrop" and self.teleportToGun then
-                    if not gunESP then
+                    if gunESP then
                         gunESP = gunESP:remove()
                     end
+                end
+            end)
+
+            game:GetService("RunService").RenderStepped:Connect(function()
+                if gunESP then
+                    gunESP:update()
                 end
             end)
 
             sheriffCommands:Toggle("Teleport to Gun", function(bool)
                 self.teleportToGun = bool
             end)
+
+            self.colours = {
+                Innocent = Color3.fromRGB(1, 243, 106),
+                Sheriff = Color3.fromRGB(1, 66, 243),
+                Murderer = Color3.fromRGB(243, 1, 1),
+                GunDrop = Color3.fromRGB(1, 66, 243)
+            }
+
+            local render = window:CreateFolder("Render")
+            render:ColorPicker("Innocent ESP Color", Color3.fromRGB(1, 243, 106), function(color)
+                self.colours.Innocent = color
+            end)
+
+            render:ColorPicker("Sheriff ESP Color", Color3.fromRGB(1, 66, 243), function(color)
+                self.colours.Sheriff = color
+            end)
+
+            render:ColorPicker("Murderer ESP Color", Color3.fromRGB(243, 1, 1), function(color)
+                self.colours.Murderer = color
+            end)
+
+            render:ColorPicker("Gun ESP Color", Color3.fromRGB(243, 1, 1), function(color)
+                self.colours.GunDrop = color
+            end)
+
 
             fastSpawn(function()
                 while wait(0.1) do
@@ -1309,11 +1323,11 @@ do
                                 character:FindFirstChild("Gun")
                             )
     
-                            local colour = Color3.new(0, 1, 0)
+                            local colour = self.colours.Innocent
                             if knife then
-                                colour = Color3.new(1, 0, 0)
+                                colour = self.colours.Murderer
                             elseif gun then
-                                colour = Color3.new(0, 0, 1)
+                                colour = self.colour.Sheriff
                             end
     
                             for index, esp in pairs(tracking) do
@@ -1437,11 +1451,11 @@ do
                     for _, player in ipairs(game.Players:GetPlayers()) do
                         local character = player.Character
                         if character then
-                            local colour = Color3.new(0, 1, 0)
+                            local colour = Color3.fromRGB(1, 243, 106)
                             
                             pcall(function()
                                 if character:FindFirstChildWhichIsA("Shirt").ShirtTemplate ~= localPlayer.Character:FindFirstChildWhichIsA("Shirt").ShirtTemplate then
-                                    colour = Color3.new(1, 0, 0)
+                                    colour = Color3.fromRGB(189, 27, 27)
                                 end
                             end)
     
