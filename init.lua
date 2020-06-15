@@ -1193,11 +1193,11 @@ do
             end))
 
             local render = window:CreateFolder("Render")
-            render:Button("Shark ESP", function(bool)
+            render:Toggle("Shark ESP", function(bool)
                 sharkESP = bool
             end)
 
-            render:Button("Shark Tracers", function(bool)
+            render:Toggle("Shark Tracers", function(bool)
                 sharkTracer = bool
             end)
         end
