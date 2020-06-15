@@ -129,9 +129,9 @@ do
 
             local espColor = fromRGB(255, 255, 255);
 
-            local function characterRemoving(char)
+            local function characterRemoving(plr)
                 for i, v in next, tracking do
-                    if v.char == char then
+                    if v.plr == plr then
                         v:remove();
                         remove(tracking, i);
                     end;
@@ -161,7 +161,9 @@ do
                 plr.CharacterAdded:Connect(function()
                     characterAdded(plr);
                 end);
-                plr.CharacterRemoving:Connect(characterRemoving);
+                plr.CharacterRemoving:Connect(function()
+                    characterRemoving(plr);
+                end);
             end;
 
             players.PlayerAdded:Connect(playerAdded);
