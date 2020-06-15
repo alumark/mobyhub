@@ -195,7 +195,7 @@ do
                     v:remove();
                 end
                 tracking = {};
-                self.triggerbot = enable
+                tracerEnabled = enable
                 if espEnabled then
                     for _, plr in ipairs(players:GetPlayers()) do
                         playerAdded(plr)
@@ -1284,7 +1284,7 @@ do
                 end
             end)
 
-            window:Toggle("Teleport to Gun", function(bool)
+            sheriffCommands:Toggle("Teleport to Gun", function(bool)
                 self.teleportToGun = bool
             end)
 
