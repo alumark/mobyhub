@@ -1081,87 +1081,85 @@ do
             })
 
 
-            --pcall(function()
-                local game_metatable = getrawmetatable(game)
-                local namecall_original = game_metatable.__namecall
+            local game_metatable = getrawmetatable(game)
+            local namecall_original = game_metatable.__namecall
 
-                setreadonly(game_metatable, false)
-                local mouse = game.Players.LocalPlayer:GetMouse()
+            setreadonly(game_metatable, false)
+            local mouse = game.Players.LocalPlayer:GetMouse()
 
 
-                game_metatable.__namecall = newcclosure(function(self, ...)
-                    local method = getnamecallmethod()
+            game_metatable.__namecall = newcclosure(function(self, ...)
+                local method = getnamecallmethod()
+                
+                local args = {...}
+
+                if self.Name == "ProjectileRenderEvent" and method == "FireServer" and window.flags.aimbot then
+                    local closestCharacter, closestDistance = workspace.Sharks:GetChildren()[1], math.huge
+                    for _, shark in ipairs(workspace.Sharks:GetChildren()) do
+                        if shark then
+                            local pos = args[5]
+                            if typeof(pos) == "CFrame" then
+                                pos = pos.Position
+                            end
+                            local distance = (shark.Body.Position - pos).magnitude
+                            if distance < closestDistance then
+                                closestCharacter, closestDistance = shark, distance
+                            end
+                        end
+                    end
+                
+                    if closestCharacter then
+                        args[5] = closestCharacter.Body.CFrame
+                        args[4] = closestCharacter.Body.CFrame.Position
+                    end
                     
-                    local args = {...}
+                    return self.FireServer(self, unpack(args))
+                end
+                
+                if method == "FindPartOnRay" and not checkcaller() and getcallingscript():IsDescendantOf(game.Players.LocalPlayer.Character) then
+                    if window.flags.wallbang then
+                        local ray = Ray.new(args[1].Origin, (mouse.Hit.p - args[1].Origin))
+                        args[1] = ray
+                    end
 
-                    if self.Name == "ProjectileRenderEvent" and method == "FireServer" and window.flags.aimbot then
+                    if window.flags.aimbot then
                         local closestCharacter, closestDistance = workspace.Sharks:GetChildren()[1], math.huge
                         for _, shark in ipairs(workspace.Sharks:GetChildren()) do
                             if shark then
-                                local pos = args[5]
-                                if typeof(pos) == "CFrame" then
-                                    pos = pos.Position
-                                end
+                                local pos = localMouse.Hit.p
                                 local distance = (shark.Body.Position - pos).magnitude
                                 if distance < closestDistance then
                                     closestCharacter, closestDistance = shark, distance
                                 end
                             end
                         end
-                    
-                        if closestCharacter then
-                            args[5] = closestCharacter.Body.CFrame
-                            args[4] = closestCharacter.Body.CFrame.Position
-                        end
                         
-                        return self.FireServer(self, unpack(args))
-                    end
-                    
-                    if method == "FindPartOnRay" and not checkcaller() and getcallingscript():IsDescendantOf(game.Players.LocalPlayer.Character) then
-                        if window.flags.wallbang then
-                            local ray = Ray.new(args[1].Origin, (mouse.Hit.p - args[1].Origin))
+                        if closestCharacter then
+                            local ray = Ray.new(args[1].Origin, (closestCharacter.Body.Position - args[1].Origin))
                             args[1] = ray
                         end
-
-                        if window.flags.aimbot then
-                            local closestCharacter, closestDistance = workspace.Sharks:GetChildren()[1], math.huge
-                            for _, shark in ipairs(workspace.Sharks:GetChildren()) do
-                                if shark then
-                                    local pos = localMouse.Hit.p
-                                    local distance = (shark.Body.Position - pos).magnitude
-                                    if distance < closestDistance then
-                                        closestCharacter, closestDistance = shark, distance
-                                    end
-                                end
-                            end
-                            
-                            if closestCharacter then
-                                local ray = Ray.new(args[1].Origin, (closestCharacter.Body.Position - args[1].Origin))
-                                args[1] = ray
-                            end
-                        end
-
-                        args[2] = {args[2]}
-
-                        return self.FindPartOnRayWithIgnoreList(self, unpack(args))
                     end
-                    
-                    return namecall_original(self, unpack(args)) 
-                end)
 
-                local oldFunction
-                oldFunction = hookfunction(workspace.FindPartOnRayWithIgnoreList, newcclosure(function(self, ...)
-                    local args = {...}
-                    
-                    if window.flags.wallbang then
-                        table.insert(args[2], workspace.Terrain)
-                        table.insert(args[2], workspace.Boats)
-                        table.insert(args[2], workspace.Lobby)
-                    end
-                    
-                    return oldFunction(self, unpack(args))
-                end))
-            --end)
+                    args[2] = {args[2]}
+
+                    return self.FindPartOnRayWithIgnoreList(self, unpack(args))
+                end
+                
+                return namecall_original(self, unpack(args)) 
+            end)
+
+            local oldFunction
+            oldFunction = hookfunction(workspace.FindPartOnRayWithIgnoreList, newcclosure(function(self, ...)
+                local args = {...}
+                
+                if window.flags.wallbang then
+                    table.insert(args[2], workspace.Terrain)
+                    table.insert(args[2], workspace.Boats)
+                    table.insert(args[2], workspace.Lobby)
+                end
+                
+                return oldFunction(self, unpack(args))
+            end))
         end
     end
     
