@@ -1246,7 +1246,8 @@ do
             local gunESP
             local player = game.Players.LocalPlayer
             workspace.ChildAdded:Connect(function(child)
-                if child.Name == "GunDrop" and self.teleportToGun then
+                if child.Name == "GunDrop" then
+
                     if not gunESP then
                         gunESP = ESP.new({
                             part = child,
@@ -1259,14 +1260,18 @@ do
                         })
                     end
 
-                    local character = player.Character or player.CharacterAdded:Wait()
-                    local knife = player.Backpack:FindFirstChild("Knife") or character:FindFirstChild("Knife")
-                    if not knife then
-                        wait(1)
-                        local lastCFrame = player.Character.HumanoidRootPart.CFrame
-                        player.Character.HumanoidRootPart.CFrame = child.CFrame
-                        wait()
-                        player.Character.HumanoidRootPart.CFrame = lastCFrame
+                    if self.teleportToGun then
+                        local character = player.Character
+                        if character then
+                            local knife = player.Backpack:FindFirstChild("Knife") or character:FindFirstChild("Knife")
+                            if not knife then
+                                wait(1)
+                                local lastCFrame = player.Character.HumanoidRootPart.CFrame
+                                player.Character.HumanoidRootPart.CFrame = child.CFrame
+                                wait()
+                                player.Character.HumanoidRootPart.CFrame = lastCFrame
+                            end
+                        end
                     end
                 end
             end)
