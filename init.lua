@@ -147,7 +147,7 @@ do
                 table.insert(tracking, ESP.new({
                     plr = plr,
                     part = rootPart,
-                    text = plr.Name,
+                    name = plr.Name,
                     espBoxVisible = self.espEnabled,
                     tracerVisible = self.tracersEnabled,
                     text = plr.Name,
@@ -601,6 +601,33 @@ do
             self.flySpeed = 100
 
             local window = Library:CreateWindow("Sharkbite")
+
+            local sharkTracking = {}
+            fastSpawn(function()
+                while wait(0.1) do
+                    for index, esp in ipairs(sharkTracking) do
+                        esp:remove()
+                        table.remove(sharkTracking, index)
+                    end
+
+                    for _, shark in ipairs(workspace.Sharks:GetChildren()) do
+                        if shark:IsA("Folder") then
+                            local text = shark.Name:sub(("SHARK_"):len())
+                            table.insert(sharkTracking, 
+                                ESP.new({
+                                    part = rootPart,
+                                    name = text,
+                                    espBoxVisible = self.espEnabled,
+                                    tracerVisible = self.tracersEnabled,
+                                    text = text,
+                                    teamCheck = false,
+                                    espColor = Color3.new(1, 0, 0)
+                                })
+                            )
+                        end
+                    end
+                end
+            end)
 
             -- Shark Commands
             window:Section("Shark Commands")
