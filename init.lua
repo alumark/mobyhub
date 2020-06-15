@@ -1268,7 +1268,7 @@ do
                                 wait(1)
                                 local lastCFrame = player.Character.HumanoidRootPart.CFrame
                                 player.Character.HumanoidRootPart.CFrame = child.CFrame
-                                wait()
+                                wait(0.1)
                                 player.Character.HumanoidRootPart.CFrame = lastCFrame
                             end
                         end
