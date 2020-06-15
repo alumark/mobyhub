@@ -177,12 +177,8 @@ do
 
             local window = Library:CreateWindow("Universal")
             local discord = window:CreateFolder("Made by Alumark")
-            discord:Button("Copy Discord Link", function()
+            discord:Button("Copy Discord", function()
                 setclipboard(discordLink)
-            end)
-
-            discord:Button("Copy Image", function()
-                setclipboard(game:HttpGet("https://mobyhub-pipeline.glitch.me/image"))
             end)
 
             local render = window:CreateFolder("Render")
