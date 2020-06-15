@@ -141,7 +141,6 @@ do
             local function characterAdded(plr)
                 local char = plr.Character;
                 local rootPart = char:WaitForChild("HumanoidRootPart"); 
-                char:WaitForChild("Head");
                 table.insert(tracking, ESP.new({
                     plr = plr,
                     part = rootPart,
@@ -169,7 +168,6 @@ do
 
             runService.RenderStepped:Connect(function()
                 for _, v in pairs(tracking) do
-                    print(v)
                     v:update();
                 end;
             end);
