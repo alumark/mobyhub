@@ -1080,7 +1080,6 @@ do
                 flag = "aimbot"
             })
 
-
             local game_metatable = getrawmetatable(game)
             local namecall_original = game_metatable.__namecall
 
@@ -1244,10 +1243,6 @@ do
     
                 window:Toggle("Aimbot", {
                     flag = "aimbot"
-                })
-
-                window:Toggle("Wallbang", {
-                    flag = "wallbang"
                 })
     
                 fastSpawn(function()
