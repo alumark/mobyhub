@@ -1195,118 +1195,143 @@ do
     local MURDER_MYSTERY_2 = "MM2"
     do
         hub:AddGame(MURDER_MYSTERY_2, {142823291})
-        local MURDER_MYSTERY_2 = "MM2"
-        do
-            hub:AddGame(MURDER_MYSTERY_2, {142823291})
-            hub.games[MURDER_MYSTERY_2].InitializeUI = function(self)
-                local window = Library:CreateWindow("Murder Mystery 2")
-                
-                window:Section("Sheriff Commands")
+        hub.games[MURDER_MYSTERY_2].InitializeUI = function(self)
+            local window = Library:CreateWindow("Murder Mystery 2")
+            
+            window:Section("Sheriff Commands")
 
-                local game_metatable = getrawmetatable(game)
-                local namecall_original = game_metatable.__namecall
+            local game_metatable = getrawmetatable(game)
+            local namecall_original = game_metatable.__namecall
 
-                setreadonly(game_metatable, false)
+            setreadonly(game_metatable, false)
 
-                local function getMap()
-                    local map
-                
-                    for i, v in pairs(game:GetService("Workspace"):GetChildren()) do
-                        if v:IsA("Model") and v:FindFirstChild("Spawns") then
-                            map = v
-                        end
+            local function getMap()
+                local map
+            
+                for i, v in pairs(game:GetService("Workspace"):GetChildren()) do
+                    if v:IsA("Model") and v:FindFirstChild("Spawns") then
+                        map = v
                     end
-                
-                    return map
                 end
-
-                game_metatable.__namecall = newcclosure(function(self, ...)
-                    local method = getnamecallmethod()
-                    
-                    local args = {...}
-
-                    if self.Name == "ShootGun" and method == "InvokeServer" and window.flags.aimbot then
-                        local closestCharacter
-                        for _, currentPlayer in ipairs(game.Players:GetPlayers()) do
-                            if currentPlayer ~= game.Players.LocalPlayer then
-                                local character = currentPlayer.Character
-                                if character then
-                                    local knife = currentPlayer.Backpack:FindFirstChild("Knife") or character:FindFirstChild("Knife")
-                                    if knife then
-                                       closestCharacter = character 
-                                    end
-                                end
-                            end
-                        end
-                    
-                        if closestCharacter then
-                            args[2] = closestCharacter.HumanoidRootPart.CFrame.p
-                        end
-                        
-                        return self.InvokeServer(self, unpack(args))
-                    end
-
-                    if method == "FindPartOnRay" and not checkcaller() and getcallingscript():IsDescendantOf(game.Players.LocalPlayer.Character) then
-                        if window.flags.wallbang then
-                            local ray = Ray.new(args[1].Origin, (mouse.Hit.p - args[1].Origin))
-                            args[1] = ray
-                        end
-
-                        args[2] = {args[2]}
-
-                        return self.FindPartOnRayWithIgnoreList(self, unpack(args))
-                    end
-                    
-                    return namecall_original(self, unpack(args)) 
-                end)
-
-                local oldFunction
-                oldFunction = hookfunction(workspace.FindPartOnRayWithIgnoreList, newcclosure(function(self, ...)
-                    local args = {...}
-                    
-                    if window.flags.wallbang then
-                        table.insert(args[2], getMap())
-                    end
-                    
-                    return oldFunction(self, unpack(args))
-                end))
-    
-                window:Toggle("Aimbot", {
-                    flag = "aimbot"
-                })
-    
-                fastSpawn(function()
-                    while wait(0.1) do
-                        for _, player in ipairs(game.Players:GetPlayers()) do
-                            local character = player.Character
-                            if character then
-                                local knife = player.Backpack:FindFirstChild("Knife") or character:FindFirstChild("Knife")
-                                local gun = (
-                                    player.Backpack:FindFirstChild("Revolver") or 
-                                    character:FindFirstChild("Revolver") or 
-                                    player.Backpack:FindFirstChild("Gun") or 
-                                    character:FindFirstChild("Gun")
-                                )
-        
-                                local colour = Color3.new(0, 1, 0)
-                                if knife then
-                                    colour = Color3.new(1, 0, 0)
-                                elseif gun then
-                                    colour = Color3.new(0, 0, 1)
-                                end
-        
-                                for index, esp in pairs(tracking) do
-                                    if esp.plr == player then
-                                        tracking[index].espColor = colour
-                                    end
-                                end
-                            end
-                        end
-                    end
-                end)
+            
+                return map
             end
 
+            game_metatable.__namecall = newcclosure(function(self, ...)
+                local method = getnamecallmethod()
+                
+                local args = {...}
 
+                if self.Name == "ShootGun" and method == "InvokeServer" and window.flags.aimbot then
+                    local closestCharacter
+                    for _, currentPlayer in ipairs(game.Players:GetPlayers()) do
+                        if currentPlayer ~= game.Players.LocalPlayer then
+                            local character = currentPlayer.Character
+                            if character then
+                                local knife = currentPlayer.Backpack:FindFirstChild("Knife") or character:FindFirstChild("Knife")
+                                if knife then
+                                    closestCharacter = character 
+                                end
+                            end
+                        end
+                    end
+                
+                    if closestCharacter then
+                        args[2] = closestCharacter.HumanoidRootPart.CFrame.p
+                    end
+                    
+                    return self.InvokeServer(self, unpack(args))
+                end
+
+                if method == "FindPartOnRay" and not checkcaller() and getcallingscript():IsDescendantOf(game.Players.LocalPlayer.Character) then
+                    if window.flags.wallbang then
+                        local ray = Ray.new(args[1].Origin, (mouse.Hit.p - args[1].Origin))
+                        args[1] = ray
+                    end
+
+                    args[2] = {args[2]}
+
+                    return self.FindPartOnRayWithIgnoreList(self, unpack(args))
+                end
+                
+                return namecall_original(self, unpack(args)) 
+            end)
+
+            local oldFunction
+            oldFunction = hookfunction(workspace.FindPartOnRayWithIgnoreList, newcclosure(function(self, ...)
+                local args = {...}
+                
+                if window.flags.wallbang then
+                    table.insert(args[2], getMap())
+                end
+                
+                return oldFunction(self, unpack(args))
+            end))
+
+            window:Toggle("Aimbot", {
+                flag = "aimbot"
+            })
+
+            local gunESP
+            local player = game.Players.LocalPlayer
+            workspace.ChildAdded:Connect(function(child)
+                if child.Name == "GunDrop" and window.flags.teleportToGun then
+                    if not gunESP then
+                        gunESP = ESP.new({
+                            part = child,
+                            name = child.Name,
+                            espBoxVisible = espEnabled,
+                            tracerVisible = tracerEnabled,
+                            text = "Gun",
+                            teamCheck = false,
+                            espColor = Color3.new(0, 0, 1)
+                        })
+                    end
+                    player.Character:MoveTo(child.Position)
+                end
+            end)
+
+            workspace.ChildRemoved:Connect(function(child)
+                if child.Name == "GunDrop" and window.flags.teleportToGun then
+                    if not gunESP then
+                        gunESP = gunESP:remove()
+                    end
+                end
+            end)
+
+            window:Toggle("Teleport to Gun", {
+                flag = "teleportToGun"
+            })
+
+            fastSpawn(function()
+                while wait(0.1) do
+                    for _, player in ipairs(game.Players:GetPlayers()) do
+                        local character = player.Character
+                        if character then
+                            local knife = player.Backpack:FindFirstChild("Knife") or character:FindFirstChild("Knife")
+                            local gun = (
+                                player.Backpack:FindFirstChild("Revolver") or 
+                                character:FindFirstChild("Revolver") or 
+                                player.Backpack:FindFirstChild("Gun") or 
+                                character:FindFirstChild("Gun")
+                            )
+    
+                            local colour = Color3.new(0, 1, 0)
+                            if knife then
+                                colour = Color3.new(1, 0, 0)
+                            elseif gun then
+                                colour = Color3.new(0, 0, 1)
+                            end
+    
+                            for index, esp in pairs(tracking) do
+                                if esp.plr == player then
+                                    tracking[index].espColor = colour
+                                end
+                            end
+                        end
+                    end
+                end
+            end)
         end
     end
 
