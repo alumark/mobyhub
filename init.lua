@@ -194,7 +194,7 @@ do
             window:Toggle("Tracers", {
                 flag = "tracers"
             }, function()
-                for _, v in pairs(tracking) do
+                for i, v in pairs(tracking) do
                     v:remove();
                     table.remove(tracking, i)
                 end
