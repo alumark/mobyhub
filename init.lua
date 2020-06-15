@@ -180,6 +180,9 @@ do
             discord:Button("Copy Discord", function()
                 setclipboard(discordLink)
             end)
+            discord:Button("Run Infinite Yield", function()
+                loadstring(game:HttpGet('https://raw.githubusercontent.com/EdgeIY/infiniteyield/master/source'))()
+            end)
 
             local render = window:CreateFolder("Render")
             render:Toggle("ESP", function(toggle)
