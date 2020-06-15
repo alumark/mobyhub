@@ -28,6 +28,7 @@ local player = game.Players.LocalPlayer
 
 local Library = loadstring(game:HttpGet("https://raw.githubusercontent.com/alumark/mobyhub-dependencies/master/ui.lua", true))()
 local ESP = loadstring(game:HttpGet("https://raw.githubusercontent.com/alumark/mobyhub-dependencies/master/esp.lua", true))()
+print(ESP)
 
 local GripOnOff = false
 local DupeOnOff = false
@@ -204,9 +205,6 @@ do
                 end;
             end)
 
-            window:Button(discordlink, function()
-                setclipboard(discordlink)
-            end)
 
             fastSpawn(function()
                 local mouse = player:GetMouse()
@@ -237,6 +235,11 @@ do
             window:Toggle("Anti-AFK", {
                 flag = "antiafk"
             })
+
+            
+            window:Button(discordlink, function()
+                setclipboard(discordlink)
+            end)
         end
     end
 
