@@ -20,7 +20,7 @@ until game:IsLoaded()
 local players = game:GetService("Players");
 local runService = game:GetService("RunService");
 
-local discordlink = game:HttpGet("https://mobyhub-pipeline.glitch.me/discord")
+local discordLink = game:HttpGet("https://mobyhub-pipeline.glitch.me/discord")
 
 print("mobyhub by alumark")
 
@@ -176,6 +176,11 @@ do
 
 
             local window = Library:CreateWindow("Universal")
+            local discord = Library:CreateFolder("Made by Alumark")
+            discord:Button("Copy Discord Link", function()
+                setclipboard(discordLink)
+            end)
+
             local render = window:CreateFolder("Render")
             render:Toggle("ESP", function(toggle)
                 for _, v in pairs(tracking) do
