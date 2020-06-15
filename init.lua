@@ -116,7 +116,7 @@ end
 local tracking = {};
 
 local espEnabled = false
-local tracersEnabled = false
+local tracerEnabled = false
 
 local hub = Hub.new()
 do
@@ -146,7 +146,7 @@ do
                     part = rootPart,
                     name = plr.Name,
                     espBoxVisible = espEnabled,
-                    tracerVisible = tracersEnabled,
+                    tracerVisible = tracerEnabled,
                     text = plr.Name,
                     teamCheck = false,
                     espColor = espColor
@@ -178,9 +178,8 @@ do
             window:Toggle("ESP", {
                 flag = "esp"
             }, function()
-                for i, v in pairs(tracking) do
+                for _, v in pairs(tracking) do
                     v:remove();
-                    tracking[i] = nil
                 end
                 tracking = {};
                 espEnabled = window.flags.esp
@@ -192,14 +191,13 @@ do
             end)
 
             window:Toggle("Tracers", {
-                flag = "tracers"
+                flag = "tracer"
             }, function()
-                for i, v in pairs(tracking) do
+                for _, v in pairs(tracking) do
                     v:remove();
-                    tracking[i] = nil
                 end
                 tracking = {};
-                tracersEnabled = window.flags.tracers
+                tracerEnabled = window.flags.tracer
                 if espEnabled then
                     for _, plr in ipairs(players:GetPlayers()) do
                         playerAdded(plr)
