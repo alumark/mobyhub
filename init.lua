@@ -601,6 +601,9 @@ do
 
             local window = Library:CreateWindow("Sharkbite")
 
+            local sharkESP = false
+            local sharkTracer = false
+
             local sharkTracking = {}
             runService.RenderStepped:Connect(function()
                 for _, v in pairs(sharkTracking) do
@@ -624,8 +627,8 @@ do
                             ESP.new({
                                 part = shark.Body,
                                 name = text,
-                                espBoxVisible = espEnabled,
-                                tracerVisible = tracerEnabled,
+                                espBoxVisible = sharkESP,
+                                tracerVisible = sharkTracer,
                                 text = text,
                                 teamCheck = false,
                                 espColor = Color3.new(1, 0, 0)
@@ -1188,6 +1191,15 @@ do
                 
                 return oldFunction(instance, unpack(args))
             end))
+
+            local render = window:CreateFolder("Render")
+            render:Button("Shark ESP", function(bool)
+                sharkESP = bool
+            end)
+
+            render:Button("Shark Tracers", function(bool)
+                sharkTracer = bool
+            end)
         end
     end
     
