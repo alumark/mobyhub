@@ -145,8 +145,8 @@ do
                     plr = plr,
                     part = rootPart,
                     name = plr.Name,
-                    espBoxVisible = self.espEnabled,
-                    tracerVisible = self.tracersEnabled,
+                    espBoxVisible = espEnabled,
+                    tracerVisible = tracersEnabled,
                     text = plr.Name,
                     teamCheck = false,
                     espColor = espColor
@@ -1293,6 +1293,7 @@ do
         
                                 for index, esp in pairs(tracking) do
                                     if esp.plr == player then
+                                        print("hi")
                                         tracking[index].espColor = colour
                                     end
                                 end
