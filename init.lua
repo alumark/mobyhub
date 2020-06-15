@@ -1291,7 +1291,7 @@ do
                 Innocent = Color3.fromRGB(0, 255, 34),
                 Sheriff = Color3.fromRGB(1, 66, 243),
                 Murderer = Color3.fromRGB(243, 1, 1),
-                GunDrop = Color3.fromRGB(1, 166, 243)
+                GunDrop = Color3.fromRGB(255, 0, 255)
             }
 
             local render = window:CreateFolder("Render")
@@ -1307,7 +1307,7 @@ do
                 self.colours.Murderer = color
             end)
 
-            render:ColorPicker("Gun ESP Color", Color3.fromRGB(1, 166, 243), function(color)
+            render:ColorPicker("Gun ESP Color", Color3.fromRGB(255, 0, 255), function(color)
                 self.colours.GunDrop = color
             end)
 
