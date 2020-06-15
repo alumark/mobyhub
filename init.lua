@@ -1215,7 +1215,7 @@ do
                 
                 local args = {...}
 
-                if instance.Name == "ShootGun" and method == "InvokeServer" and daimbot then
+                if instance.Name == "ShootGun" and method == "InvokeServer" and aimbot then
                     local closestCharacter
                     for _, currentPlayer in ipairs(game.Players:GetPlayers()) do
                         if currentPlayer ~= game.Players.LocalPlayer then
