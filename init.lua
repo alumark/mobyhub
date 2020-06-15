@@ -184,9 +184,11 @@ do
                 end
                 tracking = {};
                 espEnabled = window.flags.esp
-                for _, plr in ipairs(players:GetPlayers()) do
-                    playerAdded(plr)
-                end;
+                if espEnabled then
+                    for _, plr in ipairs(players:GetPlayers()) do
+                        playerAdded(plr)
+                    end
+                end
             end)
 
             window:Toggle("Tracers", {
@@ -198,9 +200,11 @@ do
                 end
                 tracking = {};
                 tracersEnabled = window.flags.tracers
-                for _, plr in ipairs(players:GetPlayers()) do
-                    playerAdded(plr)
-                end;
+                if espEnabled then
+                    for _, plr in ipairs(players:GetPlayers()) do
+                        playerAdded(plr)
+                    end
+                end
             end)
 
 
@@ -1272,7 +1276,7 @@ do
                 })
     
                 fastSpawn(function()
-                    while wait(1) do
+                    while wait(0.1) do
                         for _, player in ipairs(game.Players:GetPlayers()) do
                             local character = player.Character
                             if character then
