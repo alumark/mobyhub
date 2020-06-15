@@ -622,8 +622,8 @@ do
                                 ESP.new({
                                     part = shark.Body,
                                     name = text,
-                                    espBoxVisible = self.espEnabled,
-                                    tracerVisible = self.tracersEnabled,
+                                    espBoxVisible = espEnabled,
+                                    tracerVisible = tracerEnabled,
                                     text = text,
                                     teamCheck = false,
                                     espColor = Color3.new(1, 0, 0)
