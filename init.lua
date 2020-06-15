@@ -180,11 +180,12 @@ do
             window:Toggle("ESP", {
                 flag = "esp"
             }, function()
+            render:Toggle("ESP", function(toggle)
                 for _, v in pairs(tracking) do
                     v:remove();
                 end
                 tracking = {};
-                espEnabled = window.flags.esp
+                espEnabled = toggle
                 if espEnabled then
                     for _, plr in ipairs(players:GetPlayers()) do
                         playerAdded(plr)
@@ -192,14 +193,12 @@ do
                 end
             end)
 
-            window:Toggle("Tracers", {
-                flag = "tracer"
-            }, function()
+            render:Toggle("Tracers", function(enable)
                 for _, v in pairs(tracking) do
                     v:remove();
                 end
                 tracking = {};
-                tracerEnabled = window.flags.tracer
+                self.triggerbot = enable
                 if espEnabled then
                     for _, plr in ipairs(players:GetPlayers()) do
                         playerAdded(plr)
@@ -212,7 +211,7 @@ do
                 local mouse = player:GetMouse()
                 while true do
                     wait()
-                    if window.flags.triggerbot then
+                    if self.triggerbot then
                         if mouse.Target then
                             if mouse.Target.Parent:FindFirstChildOfClass("Humanoid") or mouse.Target.Parent.Parent:FindFirstChildOfClass("Humanoid") then
                                 mouse1click()
@@ -224,23 +223,19 @@ do
 
             local VirtualUser=game:GetService'VirtualUser'
             game:GetService'Players'.LocalPlayer.Idled:Connect(function()
-                if window.flags.antiafk then
+                if self.antiafk then
                     VirtualUser:CaptureController()
                     VirtualUser:ClickButton2(Vector2.new())
                 end
             end)
 
-            window:Toggle("Triggerbot", {
-                flag = "triggerbot"
-            })
+            local utilities = window:CreateFolder("Utilities")
+            utilities:Toggle("Triggerbot", function(enabled)
+                self.triggerbot = enabled
+            end)
 
-            window:Toggle("Anti-AFK", {
-                flag = "antiafk"
-            })
-
-            
-            window:Button(discordlink, function()
-                setclipboard(discordlink)
+            utilities:Toggle("Anti-AFK", function(enabled)
+                self.antiafk = enabled
             end)
         end
     end
@@ -252,8 +247,8 @@ do
             self.speed = 24
 
             local window = Library:CreateWindow("The Streets")
-            window:Section("Bypass")
-            window:Button("Anti-Cheat Bypass", function()
+            local Bypass = window:CreateFolder("Bypass")
+            Bypass:Button("Anti-Cheat Bypass", function()
                 pcall(function()
                     local mt = getrawmetatable(game)
                     local closure, caller = hide_me or newcclosure, checkcaller or is_protosmasher_caller or Cer.isCerus
@@ -332,20 +327,16 @@ do
                 end)
             end)
 
-            local slider = window:Slider("Sprint Speed", {
-                min = 24,
-                max = 128,
-                flag = "speed"
-            }, function(v)
+            local slider = Bypass:Slider("Sprint Speed", 24, 128, true, function(v)
                 self.speed = v
             end)
 
-            window:Button("Reset Sprint Speed", function()
+            Bypass:Button("Reset Sprint Speed", function()
                 slider:Set(24)
             end)
 
-            window:Section("Requires Bypass")
-            window:Toggle("God", {flag = "god"}, function(value)
+            Bypass = window:CreateFolder("Requires Bypass")
+            Bypass:Toggle("God", function(value)
                 if self.bypass then
                     if value then
                         if not self.godConn then
@@ -370,7 +361,7 @@ do
                 end
             end)
 
-            window:Button("Buy Uzi", function()
+            Bypass:Button("Buy Uzi", function()
                 if self.bypass then
                     if game.PlaceId == 4669040 then
                         game:GetService("StarterGui"):SetCore("SendNotification", {
@@ -401,7 +392,7 @@ do
                 end
             end)
             
-            window:Button("Buy Glock", function()
+            Bypass:Button("Buy Glock", function()
                  if self.bypass then
                     if game.PlaceId == 4669040 then
                         game:GetService("StarterGui"):SetCore("SendNotification", {
@@ -432,7 +423,7 @@ do
                 end
             end)
 
-            window:Button("Buy Sawed Off", function()
+            Bypass:Button("Buy Sawed Off", function()
                 if self.bypass then
                    if game.PlaceId == 4669040 then
                        game:GetService("StarterGui"):SetCore("SendNotification", {
@@ -463,9 +454,9 @@ do
                end
            end)
 
-            window:Toggle("Antiknock", {flag = "antiknock"}, function(value)
+           Bypass:Toggle("Antiknock", {flag = "antiknock"}, function(value)
                 if self.bypass then
-                    antiknock = window.flags.antiknock
+                    antiknock = value
                     local conn
                     conn = player.Character.Humanoid.StateChanged:Connect(function(antifunction)
                         if antiknock then
@@ -500,12 +491,12 @@ do
                 end
             end)
 
-            window:Toggle("Infinite Jump", {flag = "infiniteJump"}, function(value)
-                infiniteJump = window.flags.infiniteJump
+            Bypass:Toggle("Infinite Jump", function(value)
+                infiniteJump = value
             end)
 
-            local superPunch = window:Toggle("Superpunch", {flag = "superPunch"}, function(value)
-                if window.flags.superPunch then
+            Bypass:Toggle("Superpunch", function(value)
+                if value then
                     fastSpawn(function()
                         if player.Character:FindFirstChild("Punch") then
                             for _, x in ipairs(player.Character:GetChildren()) do
@@ -537,7 +528,7 @@ do
             end)
 
             local antistomp = false
-            window:Toggle("Antistomp", {flag = "antistomp"}, function(value)
+            Bypass:Toggle("Antistomp", function(value)
                 antistomp = value
                 if antistomp then
                     fastSpawn(function()
@@ -551,7 +542,7 @@ do
                 end
             end)
 
-            window:Section("Utilities")
+            local Utilities = window:CreateFolder("Utilities")
             pcall(function()
                 local game_metatable = getrawmetatable(game)
                 local namecall_original = game_metatable.__namecall
@@ -559,11 +550,11 @@ do
                 setreadonly(game_metatable, false)
 
                 game_metatable.__namecall = newcclosure(function(self, ...)
-                    local method = getnamecallmethod()
+                    local method = getnamecallmethods()
                     
                     local args = {...}
 
-                    if self.Name == "Fire" and method == "FireServer" and window.flags.aimbot then
+                    if self.Name == "Fire" and method == "FireServer" and self.aimbot then
                         local closestCharacter, closestDistance = nil, math.huge
                         for _, currentPlayer in ipairs(game.Players:GetPlayers()) do
                             if currentPlayer ~= game.Players.LocalPlayer then
@@ -591,9 +582,9 @@ do
                 end)
             end)
 
-            window:Toggle("Aimbot", {
-                flag = "aimbot"
-            })
+            Utilities:Toggle("Aimbot", function(bool)
+                self.aimbot = bool
+            end)
         end
     end
 
@@ -633,8 +624,8 @@ do
             end)
 
             -- Shark Commands
-            window:Section("Shark Commands")
-            window:Toggle("Fly as Shark", {flag = "sharkFly"}, function(enabled)
+            local sharkCommands = window:CreateFolder("Shark Commands")
+            sharkCommands:Toggle("Fly as Shark", function(enabled)
                 self.flyEnabled = enabled
                 fastSpawn(function()
                     local mouse = game.Players.LocalPlayer:GetMouse()
@@ -661,22 +652,18 @@ do
                 end)
             end)
 
-            window:Slider("Fly Speed", {
-                min = 100,
-                max = 500,
-                flags = "flySpeed"
-            }, function(speed)
+            sharkCommands:Slider("Fly Speed", 100, 500, true, function(speed)
                 self.flySpeed = speed
             end)
 
-            window:Toggle("Noclip as Shark", {
-                flag = "noclip"
-            })
+            sharkCommands:Toggle("Noclip as Shark", function(bool)
+                self.noclip = bool
+            end)
             
             fastSpawn(function()
                 while wait() do
                     local body = workspace.Sharks:FindFirstChild("Shark"..game.Players.LocalPlayer.Name)
-                    if body and window.flags.noclip then
+                    if body and self.noclip then
                         for _, part in ipairs(body:GetChildren()) do
                             if part:IsA("BasePart") then
                                 part.CanCollide = false
@@ -687,8 +674,8 @@ do
             end)
 
             -- Human Commands
-            window:Section("Human Commands")
-            window:Button("Rapidfire Laser Gun [Hold Gun]", function()
+            local humanCommands = window:CreateFolder("Human Commands")
+            humanCommands:Button("Rapidfire Laser Gun [Hold Gun]", function()
                loadstring([[
                     local weapon = game.Players.LocalPlayer.Character:FindFirstChildOfClass("Tool")
                     if weapon:FindFirstChildOfClass("LocalScript") then
@@ -827,7 +814,7 @@ do
                 ]])();
             end)
 
-            window:Button("Godmode Gun [Hold Gun]", function()
+            humanCommands:Button("Godmode Gun [Hold Gun]", function()
                 loadstring([[
                      local weapon = game.Players.LocalPlayer.Character:FindFirstChildOfClass("Tool")
                      if weapon:FindFirstChildOfClass("LocalScript") then
@@ -966,7 +953,7 @@ do
                  ]])();
              end)
 
-             window:Button("Instakill Gun [Hold Gun]", function()
+             humanCommands:Button("Instakill Gun [Hold Gun]", function()
                 loadstring([[
                      local weapon = game.Players.LocalPlayer.Character:FindFirstChildOfClass("Tool")
                      weapon:FindFirstChildOfClass("LocalScript"):Destroy()
@@ -1106,9 +1093,9 @@ do
                  ]])();
              end)
             
-            window:Toggle("Aimbot", {
-                flag = "aimbot"
-            })
+            humanCommands:Toggle("Aimbot", function(bool)
+                self.aimbot = bool    
+            end)
 
             local game_metatable = getrawmetatable(game)
             local namecall_original = game_metatable.__namecall
@@ -1122,7 +1109,7 @@ do
                 
                 local args = {...}
 
-                if self.Name == "ProjectileRenderEvent" and method == "FireServer" and window.flags.aimbot then
+                if self.Name == "ProjectileRenderEvent" and method == "FireServer" and self.aimbot then
                     local closestCharacter, closestDistance = workspace.Sharks:GetChildren()[1], math.huge
                     for _, shark in ipairs(workspace.Sharks:GetChildren()) do
                         if shark then
@@ -1146,12 +1133,12 @@ do
                 end
                 
                 if method == "FindPartOnRay" and not checkcaller() and getcallingscript():IsDescendantOf(game.Players.LocalPlayer.Character) then
-                    if window.flags.wallbang then
+                    if self.wallbang then
                         local ray = Ray.new(args[1].Origin, (mouse.Hit.p - args[1].Origin))
                         args[1] = ray
                     end
 
-                    if window.flags.aimbot then
+                    if self.aimbot then
                         local closestCharacter, closestDistance = workspace.Sharks:GetChildren()[1], math.huge
                         for _, shark in ipairs(workspace.Sharks:GetChildren()) do
                             if shark then
@@ -1181,7 +1168,7 @@ do
             oldFunction = hookfunction(workspace.FindPartOnRayWithIgnoreList, newcclosure(function(self, ...)
                 local args = {...}
                 
-                if window.flags.wallbang then
+                if self.wallbang then
                     table.insert(args[2], workspace.Terrain)
                     table.insert(args[2], workspace.Boats)
                     table.insert(args[2], workspace.Lobby)
@@ -1198,7 +1185,7 @@ do
         hub.games[MURDER_MYSTERY_2].InitializeUI = function(self)
             local window = Library:CreateWindow("Murder Mystery 2")
             
-            window:Section("Sheriff Commands")
+            local sheriffCommands = window:CreateFolder("Sheriff Commands")
 
             local game_metatable = getrawmetatable(game)
             local namecall_original = game_metatable.__namecall
@@ -1222,7 +1209,7 @@ do
                 
                 local args = {...}
 
-                if self.Name == "ShootGun" and method == "InvokeServer" and window.flags.aimbot then
+                if self.Name == "ShootGun" and method == "InvokeServer" and self.aimbot then
                     local closestCharacter
                     for _, currentPlayer in ipairs(game.Players:GetPlayers()) do
                         if currentPlayer ~= game.Players.LocalPlayer then
@@ -1244,7 +1231,7 @@ do
                 end
 
                 if method == "FindPartOnRay" and not checkcaller() and getcallingscript():IsDescendantOf(game.Players.LocalPlayer.Character) then
-                    if window.flags.wallbang then
+                    if self.wallbang then
                         local ray = Ray.new(args[1].Origin, (mouse.Hit.p - args[1].Origin))
                         args[1] = ray
                     end
@@ -1261,21 +1248,21 @@ do
             oldFunction = hookfunction(workspace.FindPartOnRayWithIgnoreList, newcclosure(function(self, ...)
                 local args = {...}
                 
-                if window.flags.wallbang then
+                if self.wallbang then
                     table.insert(args[2], getMap())
                 end
                 
                 return oldFunction(self, unpack(args))
             end))
 
-            window:Toggle("Aimbot", {
-                flag = "aimbot"
-            })
+            sheriffCommands:Toggle("Aimbot", function(bool)
+                self.aimbot = bool
+            end)
 
             local gunESP
             local player = game.Players.LocalPlayer
             workspace.ChildAdded:Connect(function(child)
-                if child.Name == "GunDrop" and window.flags.teleportToGun then
+                if child.Name == "GunDrop" and self.teleportToGun then
                     print('gundrop')
                     if not gunESP then
                         gunESP = ESP.new({
@@ -1293,16 +1280,16 @@ do
             end)
 
             workspace.ChildRemoved:Connect(function(child)
-                if child.Name == "GunDrop" and window.flags.teleportToGun then
+                if child.Name == "GunDrop" and self.teleportToGun then
                     if not gunESP then
                         gunESP = gunESP:remove()
                     end
                 end
             end)
 
-            window:Toggle("Teleport to Gun", {
-                flag = "teleportToGun"
-            })
+            window:Toggle("Teleport to Gun", function(bool)
+                self.teleportToGun = bool
+            end)
 
             fastSpawn(function()
                 while wait(0.1) do
@@ -1343,13 +1330,14 @@ do
         hub:AddGame(WILD_REVOLVERS, {983224898})
         hub.games[WILD_REVOLVERS].InitializeUI = function(self)
             local window = Library:CreateWindow("Wild Revolvers")
-            window:Toggle("Wallbang", {
-                flag = "wallbang"
-            })
+            local utilities = window:CreateFolder("Utilities")
+            utilities:Toggle("Wallbang", function(bool)
+                self.wallbang = bool
+            end)
 
-            window:Toggle("Aimbot", {
-                flag = "aimbot"
-            })
+            utilities:Toggle("Aimbot", function(bool)
+                self.aimbot = bool
+            end)
 
             pcall(function()
                 local function getMap()
@@ -1376,7 +1364,7 @@ do
                 mt.__namecall = newcclosure(function(instance, ...)
                     if not checkcaller() then
                         
-                        if getnamecallmethod() == "FindPartOnRayWithIgnoreList" and window.flags.wallbang then
+                        if getnamecallmethod() == "FindPartOnRayWithIgnoreList" and self.wallbang then
                             local args = {...}
                             
                             table.insert(args[2], getMap())
@@ -1404,7 +1392,7 @@ do
                     
                     local args = {...}
 
-                    if self.Name == "GunFired" and method == "FireServer" and window.flags.aimbot then
+                    if self.Name == "GunFired" and method == "FireServer" and self.aimbot then
                         local closestCharacter, closestDistance = nil, math.huge
                         for _, currentPlayer in ipairs(game.Players:GetPlayers()) do
                             if currentPlayer ~= game.Players.LocalPlayer then
