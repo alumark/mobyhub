@@ -28,7 +28,6 @@ local player = game.Players.LocalPlayer
 
 local Library = loadstring(game:HttpGet("https://raw.githubusercontent.com/alumark/mobyhub-dependencies/master/ui.lua", true))()
 local ESP = loadstring(game:HttpGet("https://raw.githubusercontent.com/alumark/mobyhub-dependencies/master/esp.lua", true))()
-print(ESP)
 
 local GripOnOff = false
 local DupeOnOff = false
@@ -169,7 +168,8 @@ do
             players.PlayerAdded:Connect(playerAdded);
 
             runService.RenderStepped:Connect(function()
-                for _, v in ipairs(tracking) do
+                for _, v in pairs(tracking) do
+                    print(v)
                     v:update();
                 end;
             end);
@@ -182,7 +182,7 @@ do
             }, function()
                 for i, v in pairs(tracking) do
                     v:remove();
-                    table.remove(tracking, i)
+                    tracking[i] = nil
                 end
                 tracking = {};
                 espEnabled = window.flags.esp
@@ -196,7 +196,7 @@ do
             }, function()
                 for i, v in pairs(tracking) do
                     v:remove();
-                    table.remove(tracking, i)
+                    tracking[i] = nil
                 end
                 tracking = {};
                 tracersEnabled = window.flags.tracers
