@@ -176,10 +176,7 @@ do
 
 
             local window = Library:CreateWindow("Universal")
-            window:Section("Render")
-            window:Toggle("ESP", {
-                flag = "esp"
-            }, function()
+            local render = window:CreateFolder("Render")
             render:Toggle("ESP", function(toggle)
                 for _, v in pairs(tracking) do
                     v:remove();
