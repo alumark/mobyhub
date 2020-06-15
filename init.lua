@@ -614,12 +614,8 @@ do
                         esp:remove()
                     end
                     sharkTracking = {}
-
-                    for i, v in pairs(tracking) do
-                        if v.plr.Team == nil or v.plr.Team == game.Teams.Sharks then
-                            v:remove()
-
-                        end
+                    if player.Team == game.Teams.Survivor then
+                        tracking = {}
                     end
 
                     for _, shark in pairs(workspace.Sharks:GetChildren()) do
