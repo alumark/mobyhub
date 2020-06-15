@@ -602,6 +602,12 @@ do
             local window = Library:CreateWindow("Sharkbite")
 
             local sharkTracking = {}
+            runService.RenderStepped:Connect(function()
+                for _, v in pairs(sharkTracking) do
+                    v:update()
+                end
+            end)
+
             fastSpawn(function()
                 while wait(0.1) do
                     for index, esp in ipairs(sharkTracking) do
@@ -614,7 +620,7 @@ do
                             local text = shark.Name:sub(("SHARK_"):len())
                             table.insert(sharkTracking, 
                                 ESP.new({
-                                    part = rootPart,
+                                    part = shark.Body,
                                     name = text,
                                     espBoxVisible = self.espEnabled,
                                     tracerVisible = self.tracersEnabled,
