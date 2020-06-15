@@ -117,15 +117,15 @@ end
 
 local tracking = {};
 
+local espEnabled = false
+localm tracersEnabled = false
+
 local hub = Hub.new()
 do
     local UNIVERSAL = "Universal"
     do
         hub:AddGame(UNIVERSAL, {0})
         hub.games[UNIVERSAL].InitializeUI = function(self)
-            self.espEnabled = false
-            self.tracersEnabled = false
-
             local remove = table.remove;
             local fromRGB = Color3.fromRGB;
 
@@ -144,7 +144,7 @@ do
                 local char = plr.Character;
                 local rootPart = char:WaitForChild("HumanoidRootPart"); 
                 char:WaitForChild("Head");
-                tracking[#tracking + 1] = ESP.new({
+                table.insert(tracking, ESP.new({
                     plr = plr,
                     part = rootPart,
                     text = plr.Name,
@@ -153,7 +153,7 @@ do
                     text = plr.Name,
                     teamCheck = false,
                     espColor = espColor
-                });
+                }))
             end;
 
             local function playerAdded(plr)
@@ -181,11 +181,12 @@ do
             window:Toggle("ESP", {
                 flag = "esp"
             }, function()
-                for _, v in pairs(tracking) do
+                for i, v in pairs(tracking) do
                     v:remove();
+                    table.remove(tracking, i)
                 end
                 tracking = {};
-                self.espEnabled = window.flags.esp
+                espEnabled = window.flags.esp
                 for _, plr in ipairs(players:GetPlayers()) do
                     playerAdded(plr)
                 end;
@@ -196,9 +197,10 @@ do
             }, function()
                 for _, v in pairs(tracking) do
                     v:remove();
+                    table.remove(tracking, i)
                 end
                 tracking = {};
-                self.tracersEnabled = window.flags.tracers
+                tracersEnabled = window.flags.tracers
                 for _, plr in ipairs(players:GetPlayers()) do
                     playerAdded(plr)
                 end;
