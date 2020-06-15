@@ -1254,7 +1254,7 @@ do
                             tracerVisible = tracerEnabled,
                             text = "Gun",
                             teamCheck = false,
-                            espColor = self.colors[child.Name]
+                            espColor = self.colors.GunDrop
                         })
                     end
 
@@ -1327,7 +1327,7 @@ do
                             if knife then
                                 colour = self.colours.Murderer
                             elseif gun then
-                                colour = self.colour.Sheriff
+                                colour = self.colours.Sheriff
                             end
     
                             for index, esp in pairs(tracking) do
