@@ -615,6 +615,13 @@ do
                     end
                     sharkTracking = {}
 
+                    for i, v in pairs(tracking) do
+                        if v.plr.Team == nil or v.plr.Team == game.Teams.Sharks then
+                            v:remove()
+
+                        end
+                    end
+
                     for _, shark in pairs(workspace.Sharks:GetChildren()) do
                         local text = shark.Name:sub(("SHARK_"):len())
                         table.insert(sharkTracking, 
