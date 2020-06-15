@@ -1209,12 +1209,13 @@ do
                 return map
             end
 
+            local aimbot = false
             game_metatable.__namecall = newcclosure(function(instance, ...)
                 local method = getnamecallmethod()
                 
                 local args = {...}
 
-                if instance.Name == "ShootGun" and method == "InvokeServer" and self.aimbot then
+                if instance.Name == "ShootGun" and method == "InvokeServer" and daimbot then
                     local closestCharacter
                     for _, currentPlayer in ipairs(game.Players:GetPlayers()) do
                         if currentPlayer ~= game.Players.LocalPlayer then
@@ -1239,7 +1240,7 @@ do
             end)
 
             sheriffCommands:Toggle("Aimbot", function(bool)
-                self.aimbot = bool
+                aimbot = bool
             end)
 
             local gunESP
