@@ -176,7 +176,7 @@ do
 
 
             local window = Library:CreateWindow("Universal")
-            local render = window:Section("Render")
+            local render = window:CreateFolder("Render")
             render:Toggle("ESP", {
                 flag = "esp"
             }, function()
@@ -552,7 +552,7 @@ do
                 end
             end)
 
-            local Utilities = window:Section("Utilities")
+            local Utilities = window:CreateFolder("Utilities")
             pcall(function()
                 local game_metatable = getrawmetatable(game)
                 local namecall_original = game_metatable.__namecall
@@ -634,7 +634,7 @@ do
             end)
 
             -- Shark Commands
-            local sharkCommands = window:Section("Shark Commands")
+            local sharkCommands = window:CreateFolder("Shark Commands")
             sharkCommands:Toggle("Fly as Shark", {flag = "sharkFly"}, function(enabled)
                 self.flyEnabled = enabled
                 fastSpawn(function()
@@ -688,7 +688,7 @@ do
             end)
 
             -- Human Commands
-            local humanCommands = window:Section("Human Commands")
+            local humanCommands = window:CreateFolder("Human Commands")
             humanCommands:Button("Rapidfire Laser Gun [Hold Gun]", function()
                loadstring([[
                     local weapon = game.Players.LocalPlayer.Character:FindFirstChildOfClass("Tool")
