@@ -1254,7 +1254,7 @@ do
                             tracerVisible = tracerEnabled,
                             text = "Gun",
                             teamCheck = false,
-                            espColor = self.colors.GunDrop
+                            espColor = self.colours.GunDrop
                         })
                     end
 
