@@ -1259,7 +1259,9 @@ do
                         })
                     end
 
-                    if not player.Backpack:FindFirstChild("Knife") or not player.Character:FindFirstChild("Knife") then
+                    local character = player.Character or player.CharacterAdded:Wait()
+                    local knife = player.Backpack:FindFirstChild("Knife") or character:FindFirstChild("Knife")
+                    if not knife then
                         wait(1)
                         local lastCFrame = player.Character.HumanoidRootPart.CFrame
                         player.Character.HumanoidRootPart.CFrame = child.CFrame
