@@ -1214,7 +1214,7 @@ do
                 
                 local args = {...}
 
-                if seinstancelf.Name == "ShootGun" and method == "InvokeServer" and self.aimbot then
+                if instance.Name == "ShootGun" and method == "InvokeServer" and self.aimbot then
                     local closestCharacter
                     for _, currentPlayer in ipairs(game.Players:GetPlayers()) do
                         if currentPlayer ~= game.Players.LocalPlayer then
@@ -1480,7 +1480,7 @@ do
 
             local fireserver_original, invokeserver_original
             local re, rf = Instance.new("RemoteEvent"), Instance.new("RemoteFunction")
-            fireserver_original = hookfunction(re.FireServer, function(self, method, ...)
+            fireserver_original = hookfunction(re.FireServer, function(instance, method, ...)
                 local script = getcallingscript()
                 
                 local noob = false
@@ -1496,15 +1496,15 @@ do
                     return
                 end
                 
-                if self.Name == "BooBuster" then
+                if instance.Name == "BooBuster" then
                     return
                 end
                 
-                if self.Name == "FX" then
+                if instance.Name == "FX" then
                     return    
                 end
                 
-                if self.Name == "SelfDamage" then
+                if instance.Name == "SelfDamage" then
                     return    
                 end
                 
@@ -1548,11 +1548,11 @@ do
                 end
                 
                 if method == "FireServer" then
-                    if self.Name == "FX" then
+                    if instance.Name == "FX" then
                         return    
                     end
                     
-                    if self.Name == "SelfDamage" then
+                    if instance.Name == "SelfDamage" then
                         return    
                     end
                 end
