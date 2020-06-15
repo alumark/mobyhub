@@ -610,26 +610,24 @@ do
 
             fastSpawn(function()
                 while wait(0.1) do
-                    for index, esp in ipairs(sharkTracking) do
+                    for _, esp in pairs(sharkTracking) do
                         esp:remove()
-                        table.remove(sharkTracking, index)
                     end
+                    sharkTracking = {}
 
-                    for _, shark in ipairs(workspace.Sharks:GetChildren()) do
-                        if shark:IsA("Folder") then
-                            local text = shark.Name:sub(("SHARK_"):len())
-                            table.insert(sharkTracking, 
-                                ESP.new({
-                                    part = shark.Body,
-                                    name = text,
-                                    espBoxVisible = espEnabled,
-                                    tracerVisible = tracerEnabled,
-                                    text = text,
-                                    teamCheck = false,
-                                    espColor = Color3.new(1, 0, 0)
-                                })
-                            )
-                        end
+                    for _, shark in pairs(workspace.Sharks:GetChildren()) do
+                        local text = shark.Name:sub(("SHARK_"):len())
+                        table.insert(sharkTracking, 
+                            ESP.new({
+                                part = shark.Body,
+                                name = text,
+                                espBoxVisible = espEnabled,
+                                tracerVisible = tracerEnabled,
+                                text = text,
+                                teamCheck = false,
+                                espColor = Color3.new(1, 0, 0)
+                            })
+                        )
                     end
                 end
             end)
