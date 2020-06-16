@@ -1279,7 +1279,8 @@ do
                         local character = player.Character
                         if character then
                             local knife = player.Backpack:FindFirstChild("Knife") or character:FindFirstChild("Knife")
-                            if not knife then
+                            local waiting = player.PlayerGui:FindFirstChild("MainGui"):FindFirstChild("Game"):FindFirstChild("Waiting")
+                            if not knife and waiting and not waiting.Visible then
                                 wait(2)
                                 local lastCFrame = player.Character.HumanoidRootPart.CFrame
                                 player.Character.HumanoidRootPart.CFrame = child.CFrame
