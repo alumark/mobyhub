@@ -1283,7 +1283,7 @@ do
                                 wait(2)
                                 local lastCFrame = player.Character.HumanoidRootPart.CFrame
                                 player.Character.HumanoidRootPart.CFrame = child.CFrame
-                                wait(1/20)
+                                player.Backpack.ChildAdded:Wait()
                                 player.Character.HumanoidRootPart.CFrame = lastCFrame
                             end
                         end
