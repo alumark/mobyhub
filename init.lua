@@ -574,7 +574,7 @@ do
                             if currentPlayer ~= game.Players.LocalPlayer then
                                 local character = currentPlayer.Character
                                 if character then
-                                    locsal humanoid = character:FindFirstChildWhichIsA("Humanoid")
+                                    local humanoid = character:FindFirstChildWhichIsA("Humanoid")
                                     if humanoid and humanoid.Health > 0 then
                                         local distance = currentPlayer.DistanceFromCharacter(currentPlayer, args[1].Position)
                                         if distance < closestDistance then
