@@ -137,7 +137,6 @@ conn = Login.Activated:Connect(function()
 
 	local uri = 'https://mobyhub.herokuapp.com/api/users/script/' .. username .. "/" .. password
 	local success, res = pcall(game.HttpGet, game, uri, true)
-	if success then
 		local isJson, jsonDecoded = pcall(HttpService.JSONDecode, HttpService, res)
 		if isJson then
 			Error.TextColor3 = Color3.new(1, 0, 0)
@@ -171,9 +170,5 @@ conn = Login.Activated:Connect(function()
 				Error.Text = "An error occurred when creating function.  This is most likely due to a syntax error on the creator's part."
 			end
 		end
-	else
-		Error.TextColor3 = Color3.new(1, 0, 0)
-		Error.Text = "An error occurred while getting the script.  This is due to an error with the heroku app."
-	end
 end)
  
