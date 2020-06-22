@@ -143,26 +143,31 @@ conn = Login.Activated:Connect(function()
 		Error.TextColor3 = Color3.new(1, 0, 0)
 		Error.Text = jsonDecoded.message
 	else
-		loadstring(res)()
-		Error.TextColor3 = Color3.new(1, 1, 1)
-		Error.Text = "Successfully ran script! (Closing in 5 seconds)"
-
-		local success = pcall(writefile, "mobyhub.data", username .. "\n" .. password)
-		if success then
-			print("Successfully saved file!")
-		else
-			print("Failed to save data.")
+		local success, func = pcall(loadstring, res)
+		if success and func then
+    		Error.TextColor3 = Color3.new(1, 1, 1)
+    		Error.Text = "Successfully ran script! (Closing in 5 seconds)"
+    
+    		local success = pcall(writefile, "mobyhub.data", username .. "\n" .. password)
+    		if success then
+    			print("Successfully saved file!")
+    		else
+    			print("Failed to save data.")
+    		end
+    
+    		conn:Disconnect()
+    		
+    		local localtimer = 5
+    		while localtimer > 0 do
+    			wait(1)
+    			localtimer = localtimer - 1
+    			Error.Text = "Successfully ran script! (Closing in " .. localtimer .. " seconds)"
+    		end
+    
+    		ScreenGui:Destroy()
+        else
+            Error.TextColor3 = Color3.new(1, 0, 0)
+            Error.Text = "An error occurred when creating function."
 		end
-
-		conn:Disconnect()
-		
-		local localtimer = 5
-		while localtimer > 0 do
-			wait(1)
-			localtimer = localtimer - 1
-			Error.Text = "Successfully ran script! (Closing in " .. localtimer .. " seconds)"
-		end
-
-		ScreenGui:Destroy()
-	end
+    end
 end)
