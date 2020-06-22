@@ -1387,9 +1387,12 @@ do
 
             self.flingWhenTP = false
             self.tpDelay = 2
-            sheriffCommands:Slider("Teleport Delay", 0, 10, true, function(v)
+
+            local tpDelay = sheriffCommands:Slider("Teleport Delay", 0, 10, false, function(v)
                 self.tpDelay = v
             end)
+
+            tpDelay:Set(2)
 
             sheriffCommands:Toggle("Fling on TP [Prevents Campers]", function(v)
                 self.flingWhenTP = v
