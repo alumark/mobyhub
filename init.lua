@@ -1284,7 +1284,10 @@ do
                                 wait(2)
                                 local lastCFrame = player.Character.HumanoidRootPart.CFrame
                                 player.Character.HumanoidRootPart.CFrame = child.CFrame
+<<<<<<< HEAD
                                 player.Character.Humanoid:Move(Vector3.new(1,0,0))
+=======
+>>>>>>> 74bb8f0052c55e41da02afa881aadb6dbc28bdfb
                                 player.Backpack.ChildAdded:Wait()
                                 player.Character.HumanoidRootPart.CFrame = lastCFrame
                             end
@@ -1505,7 +1508,11 @@ do
 
             local fireserver_original, invokeserver_original
             local re, rf = Instance.new("RemoteEvent"), Instance.new("RemoteFunction")
+<<<<<<< HEAD
             fireserver_original = hookfunction(re.FireServer, newcclosure(function(instance, method, ...)
+=======
+            fireserver_original = hookfunction(re.FireServer, function(instance, method, ...)
+>>>>>>> 74bb8f0052c55e41da02afa881aadb6dbc28bdfb
                 local script = getcallingscript()
                 
                 local noob = false
@@ -1546,14 +1553,22 @@ do
                 return unpack(returns)
             end
 
+<<<<<<< HEAD
             invokeserver_original = hookfunction(rf.InvokeServer, newcclosure(function(instance, ...)
+=======
+            invokeserver_original = hookfunction(rf.InvokeServer, function(instance, ...)
+>>>>>>> 74bb8f0052c55e41da02afa881aadb6dbc28bdfb
                 if instance.Name == "GetCodes" then
                     return spoof(instance, instance:InvokeServer(...))
                 end
                 
                 
                 return invokeserver_original(instance, ...)
+<<<<<<< HEAD
             end))
+=======
+            end)
+>>>>>>> 74bb8f0052c55e41da02afa881aadb6dbc28bdfb
 
             local game_metatable = getrawmetatable(game)
             local namecall_original = game_metatable.__namecall
@@ -1561,7 +1576,11 @@ do
 
             setreadonly(game_metatable, false)
 
+<<<<<<< HEAD
             game_metatable.__namecall = newcclosure(function(instance, ...)
+=======
+            game_metatable.__namecall = function(instance, ...)
+>>>>>>> 74bb8f0052c55e41da02afa881aadb6dbc28bdfb
                 local method = getnamecallmethod()
 
                 if method == "Kick" and instance.Name == player.Name then
@@ -1583,7 +1602,11 @@ do
                 end
                 
                 return namecall_original(instance, ...)
+<<<<<<< HEAD
             end)
+=======
+            end
+>>>>>>> 74bb8f0052c55e41da02afa881aadb6dbc28bdfb
 
         end
     end
