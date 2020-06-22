@@ -564,7 +564,7 @@ do
                 setreadonly(game_metatable, false)
 
                 game_metatable.__namecall = newcclosure(function(instance, ...)
-                    local method = getnamecallmethods()
+                    local method = getnamecallmethod()
                     
                     local args = {...}
 
@@ -574,7 +574,7 @@ do
                             if currentPlayer ~= game.Players.LocalPlayer then
                                 local character = currentPlayer.Character
                                 if character then
-                                    local humanoid = character:FindFirstChildWhichIsA("Humanoid")
+                                    locsal humanoid = character:FindFirstChildWhichIsA("Humanoid")
                                     if humanoid and humanoid.Health > 0 then
                                         local distance = currentPlayer.DistanceFromCharacter(currentPlayer, args[1].Position)
                                         if distance < closestDistance then
