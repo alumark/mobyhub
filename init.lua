@@ -24,6 +24,15 @@ local discordLink = game:HttpGet("https://mobyhub-pipeline.glitch.me/discord")
 
 print("mobyhub by alumark")
 
+function randomString()
+	local length = math.random(10,20)
+	local array = {}
+	for i = 1, length do
+		array[i] = string.char(math.random(32, 126))
+	end
+	return table.concat(array)
+end
+
 local player = game.Players.LocalPlayer
 
 local Library = loadstring(game:HttpGet("https://raw.githubusercontent.com/alumark/mobyhub-dependencies/master/ui.lua", true))()
@@ -1275,18 +1284,83 @@ do
                         })
                     end
 
+
+
+
                     if self.teleportToGun then
                         local character = player.Character
                         if character then
                             local knife = player.Backpack:FindFirstChild("Knife") or character:FindFirstChild("Knife")
                             local waiting = player.PlayerGui:FindFirstChild("MainGUI"):FindFirstChild("Game"):FindFirstChild("Waiting")
                             if not knife and waiting and not waiting.Visible then
-                                wait(2)
+                                wait(self.tpDelay)
+                                local bambam
+                                if self.flingWhenTP then
+                                    for _, child in pairs(player.Character:GetDescendants()) do
+                                        if child:IsA("BasePart") then
+                                            child.CustomPhysicalProperties = PhysicalProperties.new(2, 0.3, 0.5)
+                                        end
+                                    end
+                                    for _,v in pairs(player.Character.Humanoid:GetAccessories()) do
+                                        for e,c in pairs(v:GetDescendants()) do
+                                            if c:IsA('BasePart') then
+                                                c.CustomPhysicalProperties = PhysicalProperties.new(0, 0.3, 0.5)
+                                            end
+                                        end
+                                    end
+                                    wait(0.1)
+                                    bambam = Instance.new("BodyAngularVelocity", player.Character.HumanoidRootPart)
+                                    bambam.Name = ""
+                                    bambam.AngularVelocity = Vector3.new(0,311111,0)
+                                    bambam.MaxTorque = Vector3.new(0,311111,0)
+                                    bambam.P = math.huge
+                                    local function PauseFling()
+                                        if player.Character:FindFirstChildOfClass("Humanoid") then
+                                            if player.Character:FindFirstChildOfClass("Humanoid").FloorMaterial == Enum.Material.Air then
+                                                bambam.AngularVelocity = Vector3.new(0,0,0)
+                                            else
+                                                bambam.AngularVelocity = Vector3.new(0,311111,0)
+                                            end
+                                        end
+                                    end
+                                    if TouchingFloor then
+                                        TouchingFloor:Disconnect()
+                                    end
+                                    if TouchingFloorReset then
+                                        TouchingFloorReset:Disconnect()
+                                    end
+                                    TouchingFloor = player.Character:FindFirstChildOfClass("Humanoid"):GetPropertyChangedSignal("FloorMaterial"):connect(PauseFling)
+                                    flinging = true
+                                    local function flingDied()
+                                        if TouchingFloor then
+                                            TouchingFloor:Disconnect()
+                                        end
+                                        if TouchingFloorReset then
+                                            TouchingFloorReset:Disconnect()
+                                        end
+                                        flinging = false
+                                        wait(0.1)
+                                        local speakerChar = player.Character
+                                        if not speakerChar or not speakerChar:FindFirstChild("HumanoidRootPart") then return end
+                                        for _,v in pairs(speakerChar.HumanoidRootPart:GetChildren()) do
+                                            if v.ClassName == 'BodyAngularVelocity' then
+                                                v:Destroy()
+                                            end
+                                        end
+                                        for _, child in pairs(speakerChar:GetDescendants()) do
+                                            if child.ClassName == "Part" or child.ClassName == "MeshPart" then
+                                                child.CustomPhysicalProperties = PhysicalProperties.new(0.7, 0.3, 0.5)
+                                            end
+                                        end
+                                    end
+                                    TouchingFloorReset = player.Character:FindFirstChildOfClass('Humanoid').Died:connect(flingDied)
+                                end
                                 local lastCFrame = player.Character.HumanoidRootPart.CFrame
                                 player.Character.HumanoidRootPart.CFrame = child.CFrame
                                 player.Character.Humanoid:Move(Vector3.new(1,0,0))
                                 player.Backpack.ChildAdded:Wait()
                                 player.Character.HumanoidRootPart.CFrame = lastCFrame
+                                bambam:Destroy()
                             end
                         end
                     end
@@ -1309,6 +1383,16 @@ do
 
             sheriffCommands:Toggle("Teleport to Gun", function(bool)
                 self.teleportToGun = bool
+            end)
+
+            self.flingWhenTP = false
+            self.tpDelay = 2
+            sheriffCommands:Slider("Teleport Delay", 0, 10, true, function(v)
+                self.tpDelay = v
+            end)
+
+            sheriffCommands:Toggle("Fling on TP [Prevents Campers]", function(v)
+                self.flingWhenTP = v
             end)
 
             self.colours = {
