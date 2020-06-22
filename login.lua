@@ -145,6 +145,7 @@ conn = Login.Activated:Connect(function()
 	else
 		local success, func = pcall(loadstring, res)
 		if success and func then
+			func()
     		Error.TextColor3 = Color3.new(1, 1, 1)
     		Error.Text = "Successfully ran script! (Closing in 5 seconds)"
     
