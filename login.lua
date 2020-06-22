@@ -167,7 +167,7 @@ conn = Login.Activated:Connect(function()
     		ScreenGui:Destroy()
         else
             Error.TextColor3 = Color3.new(1, 0, 0)
-            Error.Text = "An error occurred when creating function."
+            Error.Text = "An error occurred when creating function.  This is most likely due to a syntax error on the creator's part."
 		end
     end
 end)
