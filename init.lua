@@ -20,7 +20,7 @@ until game:IsLoaded()
 local players = game:GetService("Players");
 local runService = game:GetService("RunService");
 
-local discordlink = game:HttpGet("https://mobyhub-pipeline.glitch.me/discord")
+local discordLink = game:HttpGet("https://mobyhub-pipeline.glitch.me/discord")
 
 print("mobyhub by alumark")
 
@@ -176,6 +176,14 @@ do
 
 
             local window = Library:CreateWindow("Universal")
+            local discord = window:CreateFolder("Made by Alumark")
+            discord:Button("Copy Discord", function()
+                setclipboard(discordLink)
+            end)
+            discord:Button("Run Infinite Yield", function()
+                loadstring(game:HttpGet('https://raw.githubusercontent.com/EdgeIY/infiniteyield/master/source'))()
+            end)
+
             local render = window:CreateFolder("Render")
             render:Toggle("ESP", function(toggle)
                 for _, v in pairs(tracking) do
@@ -195,7 +203,7 @@ do
                     v:remove();
                 end
                 tracking = {};
-                self.triggerbot = enable
+                tracerEnabled = enable
                 if espEnabled then
                     for _, plr in ipairs(players:GetPlayers()) do
                         playerAdded(plr)
@@ -546,12 +554,12 @@ do
 
                 setreadonly(game_metatable, false)
 
-                game_metatable.__namecall = newcclosure(function(self, ...)
+                game_metatable.__namecall = newcclosure(function(instance, ...)
                     local method = getnamecallmethods()
                     
                     local args = {...}
 
-                    if self.Name == "Fire" and method == "FireServer" and self.aimbot then
+                    if instance.Name == "Fire" and method == "FireServer" and self.aimbot then
                         local closestCharacter, closestDistance = nil, math.huge
                         for _, currentPlayer in ipairs(game.Players:GetPlayers()) do
                             if currentPlayer ~= game.Players.LocalPlayer then
@@ -572,10 +580,10 @@ do
                             args[1] = closestCharacter.HumanoidRootPart.CFrame
                         end
                         
-                        return self.FireServer(self, unpack(args))
+                        return instance.FireServer(instance, unpack(args))
                     end
                     
-                    return namecall_original(self, unpack(args)) 
+                    return namecall_original(instance, unpack(args)) 
                 end)
             end)
 
@@ -593,29 +601,36 @@ do
 
             local window = Library:CreateWindow("Sharkbite")
 
+            local sharkESP = false
+            local sharkTracer = false
+
             local sharkTracking = {}
+            runService.RenderStepped:Connect(function()
+                for _, v in pairs(sharkTracking) do
+                    v:update()
+                end
+            end)
+
             fastSpawn(function()
                 while wait(0.1) do
-                    for index, esp in ipairs(sharkTracking) do
+                    for _, esp in pairs(sharkTracking) do
                         esp:remove()
-                        table.remove(sharkTracking, index)
                     end
+                    sharkTracking = {}
 
-                    for _, shark in ipairs(workspace.Sharks:GetChildren()) do
-                        if shark:IsA("Folder") then
-                            local text = shark.Name:sub(("SHARK_"):len())
-                            table.insert(sharkTracking, 
-                                ESP.new({
-                                    part = rootPart,
-                                    name = text,
-                                    espBoxVisible = self.espEnabled,
-                                    tracerVisible = self.tracersEnabled,
-                                    text = text,
-                                    teamCheck = false,
-                                    espColor = Color3.new(1, 0, 0)
-                                })
-                            )
-                        end
+                    for _, shark in pairs(workspace.Sharks:GetChildren()) do
+                        local text = shark.Name:sub(("SHARK_"):len())
+                        table.insert(sharkTracking, 
+                            ESP.new({
+                                part = shark.Body,
+                                name = text,
+                                espBoxVisible = sharkESP,
+                                tracerVisible = sharkTracer,
+                                text = text,
+                                teamCheck = false,
+                                espColor = Color3.new(1, 0, 0)
+                            })
+                        )
                     end
                 end
             end)
@@ -1101,12 +1116,12 @@ do
             local mouse = game.Players.LocalPlayer:GetMouse()
 
 
-            game_metatable.__namecall = newcclosure(function(self, ...)
+            game_metatable.__namecall = newcclosure(function(instance, ...)
                 local method = getnamecallmethod()
                 
                 local args = {...}
 
-                if self.Name == "ProjectileRenderEvent" and method == "FireServer" and self.aimbot then
+                if instance.Name == "ProjectileRenderEvent" and method == "FireServer" and self.aimbot then
                     local closestCharacter, closestDistance = workspace.Sharks:GetChildren()[1], math.huge
                     for _, shark in ipairs(workspace.Sharks:GetChildren()) do
                         if shark then
@@ -1126,7 +1141,7 @@ do
                         args[4] = closestCharacter.Body.CFrame.Position
                     end
                     
-                    return self.FireServer(self, unpack(args))
+                    return instance.FireServer(instance, unpack(args))
                 end
                 
                 if method == "FindPartOnRay" and not checkcaller() and getcallingscript():IsDescendantOf(game.Players.LocalPlayer.Character) then
@@ -1155,14 +1170,14 @@ do
 
                     args[2] = {args[2]}
 
-                    return self.FindPartOnRayWithIgnoreList(self, unpack(args))
+                    return instance.FindPartOnRayWithIgnoreList(instance, unpack(args))
                 end
                 
-                return namecall_original(self, unpack(args)) 
+                return namecall_original(instance, unpack(args)) 
             end)
 
             local oldFunction
-            oldFunction = hookfunction(workspace.FindPartOnRayWithIgnoreList, newcclosure(function(self, ...)
+            oldFunction = hookfunction(workspace.FindPartOnRayWithIgnoreList, newcclosure(function(instance, ...)
                 local args = {...}
                 
                 if self.wallbang then
@@ -1171,8 +1186,17 @@ do
                     table.insert(args[2], workspace.Lobby)
                 end
                 
-                return oldFunction(self, unpack(args))
+                return oldFunction(instance, unpack(args))
             end))
+
+            local render = window:CreateFolder("Render")
+            render:Toggle("Shark ESP", function(bool)
+                sharkESP = bool
+            end)
+
+            render:Toggle("Shark Tracers", function(bool)
+                sharkTracer = bool
+            end)
         end
     end
     
@@ -1201,12 +1225,13 @@ do
                 return map
             end
 
-            game_metatable.__namecall = newcclosure(function(self, ...)
+            local aimbot = false
+            game_metatable.__namecall = newcclosure(function(instance, ...)
                 local method = getnamecallmethod()
                 
                 local args = {...}
 
-                if self.Name == "ShootGun" and method == "InvokeServer" and self.aimbot then
+                if instance.Name == "ShootGun" and method == "InvokeServer" and aimbot then
                     local closestCharacter
                     for _, currentPlayer in ipairs(game.Players:GetPlayers()) do
                         if currentPlayer ~= game.Players.LocalPlayer then
@@ -1224,43 +1249,20 @@ do
                         args[2] = closestCharacter.HumanoidRootPart.CFrame.p
                     end
                     
-                    return self.InvokeServer(self, unpack(args))
+                    return instance.InvokeServer(instance, unpack(args))
                 end
 
-                if method == "FindPartOnRay" and not checkcaller() and getcallingscript():IsDescendantOf(game.Players.LocalPlayer.Character) then
-                    if self.wallbang then
-                        local ray = Ray.new(args[1].Origin, (mouse.Hit.p - args[1].Origin))
-                        args[1] = ray
-                    end
-
-                    args[2] = {args[2]}
-
-                    return self.FindPartOnRayWithIgnoreList(self, unpack(args))
-                end
-                
-                return namecall_original(self, unpack(args)) 
+                return namecall_original(instance, unpack(args)) 
             end)
 
-            local oldFunction
-            oldFunction = hookfunction(workspace.FindPartOnRayWithIgnoreList, newcclosure(function(self, ...)
-                local args = {...}
-                
-                if self.wallbang then
-                    table.insert(args[2], getMap())
-                end
-                
-                return oldFunction(self, unpack(args))
-            end))
-
             sheriffCommands:Toggle("Aimbot", function(bool)
-                self.aimbot = bool
+                aimbot = bool
             end)
 
             local gunESP
             local player = game.Players.LocalPlayer
             workspace.ChildAdded:Connect(function(child)
-                if child.Name == "GunDrop" and self.teleportToGun then
-                    print('gundrop')
+                if child.Name == "GunDrop" then
                     if not gunESP then
                         gunESP = ESP.new({
                             part = child,
@@ -1269,24 +1271,70 @@ do
                             tracerVisible = tracerEnabled,
                             text = "Gun",
                             teamCheck = false,
-                            espColor = Color3.new(0, 0, 1)
+                            espColor = self.colours.GunDrop
                         })
                     end
-                    player.Character:MoveTo(child.Position)
+
+                    if self.teleportToGun then
+                        local character = player.Character
+                        if character then
+                            local knife = player.Backpack:FindFirstChild("Knife") or character:FindFirstChild("Knife")
+                            local waiting = player.PlayerGui:FindFirstChild("MainGUI"):FindFirstChild("Game"):FindFirstChild("Waiting")
+                            if not knife and waiting and not waiting.Visible then
+                                wait(2)
+                                local lastCFrame = player.Character.HumanoidRootPart.CFrame
+                                player.Character.HumanoidRootPart.CFrame = child.CFrame
+                                player.Character.Humanoid:Move(Vector3.new(1,0,0))
+                                player.Backpack.ChildAdded:Wait()
+                                player.Character.HumanoidRootPart.CFrame = lastCFrame
+                            end
+                        end
+                    end
                 end
             end)
 
             workspace.ChildRemoved:Connect(function(child)
-                if child.Name == "GunDrop" and self.teleportToGun then
-                    if not gunESP then
+                if child.Name == "GunDrop" then
+                    if gunESP then
                         gunESP = gunESP:remove()
                     end
                 end
             end)
 
-            window:Toggle("Teleport to Gun", function(bool)
+            game:GetService("RunService").RenderStepped:Connect(function()
+                if gunESP then
+                    gunESP:update()
+                end
+            end)
+
+            sheriffCommands:Toggle("Teleport to Gun", function(bool)
                 self.teleportToGun = bool
             end)
+
+            self.colours = {
+                Innocent = Color3.fromRGB(0, 255, 0),
+                Sheriff = Color3.fromRGB(1, 66, 243),
+                Murderer = Color3.fromRGB(243, 1, 1),
+                GunDrop = Color3.fromRGB(255, 0, 255)
+            }
+
+            local render = window:CreateFolder("Render")
+            render:ColorPicker("Innocent ESP Color", Color3.fromRGB(0, 255, 34), function(color)
+                self.colours.Innocent = color
+            end)
+
+            render:ColorPicker("Sheriff ESP Color", Color3.fromRGB(1, 66, 243), function(color)
+                self.colours.Sheriff = color
+            end)
+
+            render:ColorPicker("Murderer ESP Color", Color3.fromRGB(243, 1, 1), function(color)
+                self.colours.Murderer = color
+            end)
+
+            render:ColorPicker("Gun ESP Color", Color3.fromRGB(255, 0, 255), function(color)
+                self.colours.GunDrop = color
+            end)
+
 
             fastSpawn(function()
                 while wait(0.1) do
@@ -1301,11 +1349,11 @@ do
                                 character:FindFirstChild("Gun")
                             )
     
-                            local colour = Color3.new(0, 1, 0)
+                            local colour = self.colours.Innocent
                             if knife then
-                                colour = Color3.new(1, 0, 0)
+                                colour = self.colours.Murderer
                             elseif gun then
-                                colour = Color3.new(0, 0, 1)
+                                colour = self.colours.Sheriff
                             end
     
                             for index, esp in pairs(tracking) do
@@ -1384,12 +1432,12 @@ do
 
                 setreadonly(game_metatable, false)
 
-                game_metatable.__namecall = newcclosure(function(self, ...)
+                game_metatable.__namecall = newcclosure(function(instance, ...)
                     local method = getnamecallmethod()
                     
                     local args = {...}
 
-                    if self.Name == "GunFired" and method == "FireServer" and self.aimbot then
+                    if instance.Name == "GunFired" and method == "FireServer" and self.aimbot then
                         local closestCharacter, closestDistance = nil, math.huge
                         for _, currentPlayer in ipairs(game.Players:GetPlayers()) do
                             if currentPlayer ~= game.Players.LocalPlayer then
@@ -1417,10 +1465,10 @@ do
                             args[1].HitPosition = closestCharacter.HumanoidRootPart.CFrame.p
                         end
                         
-                        return self.FireServer(self, unpack(args))
+                        return self.FireServer(instance, unpack(args))
                     end
                     
-                    return namecall_original(self, unpack(args)) 
+                    return namecall_original(instance, unpack(args)) 
                 end)
             end)
 
@@ -1429,11 +1477,11 @@ do
                     for _, player in ipairs(game.Players:GetPlayers()) do
                         local character = player.Character
                         if character then
-                            local colour = Color3.new(0, 1, 0)
+                            local colour = Color3.fromRGB(1, 243, 106)
                             
                             pcall(function()
                                 if character:FindFirstChildWhichIsA("Shirt").ShirtTemplate ~= localPlayer.Character:FindFirstChildWhichIsA("Shirt").ShirtTemplate then
-                                    colour = Color3.new(1, 0, 0)
+                                    colour = Color3.fromRGB(189, 27, 27)
                                 end
                             end)
     
@@ -1451,13 +1499,13 @@ do
 
     local REASON_2_DIE = "Reason 2 Die"
     do
-        hub:AddGame(REASON_2_DIE, {})
+        hub:AddGame(REASON_2_DIE, {177200271, 628009815})
         hub.games[REASON_2_DIE].InitializeUI = function(self)
             local player = game.Players.LocalPlayer
 
             local fireserver_original, invokeserver_original
             local re, rf = Instance.new("RemoteEvent"), Instance.new("RemoteFunction")
-            fireserver_original = hookfunction(re.FireServer, function(self, method, ...)
+            fireserver_original = hookfunction(re.FireServer, newcclosure(function(instance, method, ...)
                 local script = getcallingscript()
                 
                 local noob = false
@@ -1473,22 +1521,22 @@ do
                     return
                 end
                 
-                if self.Name == "BooBuster" then
+                if instance.Name == "BooBuster" then
                     return
                 end
                 
-                if self.Name == "FX" then
+                if instance.Name == "FX" then
                     return    
                 end
                 
-                if self.Name == "SelfDamage" then
+                if instance.Name == "SelfDamage" then
                     return    
                 end
                 
-            return fireserver_original(self, method, ...)
-            end)
+                return fireserver_original(self, method, ...)
+            end))
 
-            local function spoof(self, returns)
+            local function spoof(instance, returns)
                 returns[2].CLIPS = 100
                 returns[2].AMMO = 200
                 returns[2].RANGE = 9999999
@@ -1498,14 +1546,14 @@ do
                 return unpack(returns)
             end
 
-            invokeserver_original = hookfunction(rf.InvokeServer, function(self, ...)
-                if self.Name == "GetCodes" then
-                    return spoof(self, self:InvokeServer(...))
+            invokeserver_original = hookfunction(rf.InvokeServer, newcclosure(function(instance, ...)
+                if instance.Name == "GetCodes" then
+                    return spoof(instance, instance:InvokeServer(...))
                 end
                 
                 
-                return invokeserver_original(self, ...)
-            end)
+                return invokeserver_original(instance, ...)
+            end))
 
             local game_metatable = getrawmetatable(game)
             local namecall_original = game_metatable.__namecall
@@ -1513,29 +1561,29 @@ do
 
             setreadonly(game_metatable, false)
 
-            game_metatable.__namecall = function(self, ...)
+            game_metatable.__namecall = newcclosure(function(instance, ...)
                 local method = getnamecallmethod()
 
-                if method == "Kick" and self.Name == player.Name then
+                if method == "Kick" and instance.Name == player.Name then
                     return
                 end
                 
-                if method == "Destroy" and self.ClassName == "ModuleScript" then
+                if method == "Destroy" and instance.ClassName == "ModuleScript" then
                     return    
                 end
                 
                 if method == "FireServer" then
-                    if self.Name == "FX" then
+                    if instance.Name == "FX" then
                         return    
                     end
                     
-                    if self.Name == "SelfDamage" then
+                    if instance.Name == "SelfDamage" then
                         return    
                     end
                 end
                 
-                return namecall_original(self, ...)
-            end
+                return namecall_original(instance, ...)
+            end)
 
         end
     end
