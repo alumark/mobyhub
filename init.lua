@@ -1296,7 +1296,7 @@ do
             workspace.ChildRemoved:Connect(function(child)
                 if child.Name == "GunDrop" then
                     if gunESP then
-                        gunESP = gunESP:remove()
+                        gunESP = gunESP:remove() 
                     end
                 end
             end)
