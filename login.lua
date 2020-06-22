@@ -136,40 +136,44 @@ conn = Login.Activated:Connect(function()
 	local username, password = Username.Text, Password.Text
 
 	local uri = 'https://mobyhub.herokuapp.com/api/users/script/' .. username .. "/" .. password
-	local res = game:HttpGet(uri, true)
-	local isJson, jsonDecoded = pcall(HttpService.JSONDecode, HttpService, res)
-
-	if isJson then
-		Error.TextColor3 = Color3.new(1, 0, 0)
-		Error.Text = jsonDecoded.message
-	else
-		local success, func = pcall(loadstring, res)
-		if success and func then
-			func()
-    		Error.TextColor3 = Color3.new(1, 1, 1)
-    		Error.Text = "Successfully ran script! (Closing in 5 seconds)"
-    
-    		local success = pcall(writefile, "mobyhub.data", username .. "\n" .. password)
-    		if success then
-    			print("Successfully saved file!")
-    		else
-    			print("Failed to save data.")
-    		end
-    
-    		conn:Disconnect()
-    		
-    		local localtimer = 5
-    		while localtimer > 0 do
-    			wait(1)
-    			localtimer = localtimer - 1
-    			Error.Text = "Successfully ran script! (Closing in " .. localtimer .. " seconds)"
-    		end
-    
-    		ScreenGui:Destroy()
-        else
-            Error.TextColor3 = Color3.new(1, 0, 0)
-            Error.Text = "An error occurred when creating function.  This is most likely due to a syntax error on the creator's part."
+	local success, res = pcall(game.HttpGet, game, uri, true)
+	if success then
+		local isJson, jsonDecoded = pcall(HttpService.JSONDecode, HttpService, res)
+		if isJson then
+			Error.TextColor3 = Color3.new(1, 0, 0)
+			Error.Text = jsonDecoded.message
+		else
+			local success, func = pcall(loadstring, res)
+			if success and func then
+				func()
+				Error.TextColor3 = Color3.new(1, 1, 1)
+				Error.Text = "Successfully ran script! (Closing in 5 seconds)"
+		
+				local success = pcall(writefile, "mobyhub.data", username .. "\n" .. password)
+				if success then
+					print("Successfully saved file!")
+				else
+					print("Failed to save data.")
+				end
+		
+				conn:Disconnect()
+				
+				local localtimer = 5
+				while localtimer > 0 do
+					wait(1)
+					localtimer = localtimer - 1
+					Error.Text = "Successfully ran script! (Closing in " .. localtimer .. " seconds)"
+				end
+		
+				ScreenGui:Destroy()
+			else
+				Error.TextColor3 = Color3.new(1, 0, 0)
+				Error.Text = "An error occurred when creating function.  This is most likely due to a syntax error on the creator's part."
+			end
 		end
-    end
+	else
+		Error.TextColor3 = Color3.new(1, 0, 0)
+		Error.Text = "An error occurred while getting the script.  This is due to an error with the heroku app."
+	end
 end)
  
