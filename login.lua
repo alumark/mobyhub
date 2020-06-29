@@ -26,9 +26,9 @@ local UITextSizeConstraint_3 = Instance.new("UITextSizeConstraint")
 
 local exists, data = pcall(readfile, "mobyhub.json")
 
-data = HttpService:JSONDecode(data)
 local savedUsername, savedPassword
 if exists then
+	data = HttpService:JSONDecode(data)
 	savedPassword, savedUsername = data.username, data.password
 
 	if savedUsername and savedPassword then
