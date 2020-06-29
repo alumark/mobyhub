@@ -24,13 +24,12 @@ local UITextSizeConstraint_3 = Instance.new("UITextSizeConstraint")
 	Properties:
 --]]
 
-local exists, data = pcall(readfile, "mobyhub.data")
+local exists, data = pcall(readfile, "mobyhub.json")
 
-local CHARACTER_SEPERATOR = "\n"
-
+data = HttpService:JSONDecode(data)
 local savedUsername, savedPassword
 if exists then
-	
+	savedPassword, savedUsername = data.username, data.password
 
 	if savedUsername and savedPassword then
 		local uri = 'https://mobyhub.herokuapp.com/api/users/script/' .. savedUsername .. "/" .. savedUsername
@@ -46,14 +45,12 @@ if exists then
 				Error.TextColor3 = Color3.new(1, 1, 1)
 				Error.Text = "Successfully ran script! (Closing in 5 seconds)"
 		
-				local success = pcall(writefile, "mobyhub.json", )
+				local success = pcall(writefile, "mobyhub.json", HttpService:JSONEncode({ username = savedUsername, password = savedPassword }))
 				if success then
 					print("Successfully saved file!")
 				else
 					print("Failed to save data.")
 				end
-		
-				conn:Disconnect()
 				
 				local localtimer = 5
 				while localtimer > 0 do
@@ -181,7 +178,7 @@ conn = Login.Activated:Connect(function()
 			Error.TextColor3 = Color3.new(1, 1, 1)
 			Error.Text = "Successfully ran script! (Closing in 5 seconds)"
 	
-			local success = pcall(writefile, "mobyhub.data", username .. "\n" .. password)
+			local success = pcall(writefile, "mobyhub.json", HttpService:JSONEncode({ username = username, password = password }))
 			if success then
 				print("Successfully saved file!")
 			else
