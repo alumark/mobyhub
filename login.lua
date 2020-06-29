@@ -29,7 +29,7 @@ local exists, data = pcall(readfile, "mobyhub.json")
 local savedUsername, savedPassword
 if exists then
 	data = HttpService:JSONDecode(data)
-	savedPassword, savedUsername = data.username, data.password
+	savedUsername, savedPassword = data.username, data.password
 
 	if savedUsername and savedPassword then
 		local uri = 'https://mobyhub.herokuapp.com/api/users/script/' .. savedUsername .. "/" .. savedUsername
@@ -50,13 +50,6 @@ if exists then
 					print("Successfully saved file!")
 				else
 					print("Failed to save data.")
-				end
-				
-				local localtimer = 5
-				while localtimer > 0 do
-					wait(1)
-					localtimer = localtimer - 1
-					Error.Text = "Successfully ran script! (Closing in " .. localtimer .. " seconds)"
 				end
 		
 				ScreenGui:Destroy()
