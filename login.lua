@@ -172,8 +172,8 @@ conn = Login.Activated:Connect(function()
 		Error.TextColor3 = Color3.new(1, 0, 0)
 		Error.Text = jsonDecoded.message
 	else
-		local success, func = pcall(loadstring, res)
-		if success and func then
+		local func = loadstring(res)
+		if func then
 			func()
 			Error.TextColor3 = Color3.new(1, 1, 1)
 			Error.Text = "Successfully ran script! (Closing in 5 seconds)"
