@@ -167,6 +167,7 @@ conn = Login.Activated:Connect(function()
 
 	local uri = 'https://mobyhub.herokuapp.com/api/users/script/' .. username .. "/" .. password
 	local _, res = pcall(game.HttpGet, game, uri, true)
+	print(res)
 	local isJson, jsonDecoded = pcall(HttpService.JSONDecode, HttpService, res)
 	if isJson then
 		Error.TextColor3 = Color3.new(1, 0, 0)

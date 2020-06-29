@@ -1392,8 +1392,6 @@ do
                 self.tpDelay = v
             end)
 
-            tpDelay:Set(2)
-
             sheriffCommands:Toggle("Fling on TP [Prevents Campers]", function(v)
                 self.flingWhenTP = v
             end)
