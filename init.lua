@@ -1284,6 +1284,7 @@ do
                                 wait(2)
                                 local lastCFrame = player.Character.HumanoidRootPart.CFrame
                                 player.Character.HumanoidRootPart.CFrame = child.CFrame
+                                player.Character.Humanoid:Move(Vector3.new(1,0,0))
                                 player.Backpack.ChildAdded:Wait()
                                 player.Character.HumanoidRootPart.CFrame = lastCFrame
                             end
