@@ -12,7 +12,9 @@ end
 local ScreenGui = Instance.new("ScreenGui")
 local Frame = Instance.new("Frame")
 local Login = Instance.new("TextButton")
+local Show = Instance.new("TextButton")
 local UITextSizeConstraint = Instance.new("UITextSizeConstraint")
+local UIAspectRatioConstraint = Instance.new("UIAspectRatioConstraint")
 local Username = Instance.new("TextBox")
 local Password = Instance.new("TextBox")
 local Title = Instance.new("TextLabel")
@@ -105,7 +107,22 @@ Username.Text = savedUsername or ""
 Username.TextColor3 = Color3.new(0, 0, 0)
 Username.TextSize = 14
 
+
+local PasswordHolder = Instance.new("TextLabel")
+PasswordHolder.ZIndex = 10
+PasswordHolder.AnchorPoint = Vector2.new(0.5, 0.5)
+PasswordHolder.BackgroundColor3 = Color3.new(1, 1, 1)
+PasswordHolder.BorderSizePixel = 0
+PasswordHolder.Position = UDim2.new(0.5, 0, 0.5, 0)
+PasswordHolder.Size = UDim2.new(1, 0, 1, 0)
+PasswordHolder.Font = Enum.Font.GothamSemibold
+PasswordHolder.BackgroundTransparency = 1
+PasswordHolder.Text = ""
+PasswordHolder.TextSize = 14
+
+
 Password.Name = "Password"
+
 Password.Parent = Frame
 Password.AnchorPoint = Vector2.new(0.5, 0)
 Password.BackgroundColor3 = Color3.new(1, 1, 1)
@@ -116,9 +133,53 @@ Password.ClearTextOnFocus = false
 Password.Font = Enum.Font.GothamSemibold
 Password.PlaceholderColor3 = Color3.new(0.0392157, 0.0392157, 0.0392157)
 Password.PlaceholderText = "Password"
-Password.Text = savedPassword or ""
 Password.TextColor3 = Color3.new(0, 0, 0)
 Password.TextSize = 14
+PasswordHolder.Parent = Password
+
+Show.Name = "ShowPassword"
+Show.Text = "Show"
+Show.Parent = Frame
+Show.BackgroundColor3 = Color3.new(1, 1, 1)
+Show.BorderSizePixel = 0
+Show.Style = Enum.ButtonStyle.RobloxRoundDropdownButton
+Show.Font = Enum.Font.GothamBold
+Show.Size = UDim2.fromScale(1, 1)
+Show.Position = UDim2.new(1, 5, 0, 0)
+Show.TextSize = 14
+Show.Parent = Password
+UIAspectRatioConstraint:Clone().Parent = Show
+
+
+local show_password = false
+Show.Activated:Connect(function()
+    show_password = not show_password
+    
+    Show.Text = (show_password and "Hide" or "Show")
+    
+    if show_password then
+        PasswordHolder.TextTransparency = 1
+		Password.TextTransparency = 0
+	else
+	    if Password.Text:len() > 0 then
+            PasswordHolder.TextTransparency = 0
+	        Password.TextTransparency = 1	         
+	    end
+	end
+end)
+
+Password:GetPropertyChangedSignal("Text"):Connect(function()
+    if Password.Text:len() > 0 and not show_password then
+        PasswordHolder.Text = ("*"):rep(Password.Text:len())
+        PasswordHolder.TextTransparency = 0
+		Password.TextTransparency = 1
+	else
+	    PasswordHolder.TextTransparency = 1
+	    Password.TextTransparency = 0
+	end
+end)
+
+Password.Text = savedPassword or ""
 
 Title.Name = "Title"
 Title.Parent = Frame
@@ -159,15 +220,14 @@ conn = Login.Activated:Connect(function()
 	local username, password = Username.Text, Password.Text
 
 	local uri = 'https://mobyhub.herokuapp.com/api/users/script/' .. username .. "/" .. password
-	local _, res = pcall(game.HttpGet, game, uri, true)
-	print(res)
+	local success, res = pcall(game.HttpGet, game, uri, true)
 	local isJson, jsonDecoded = pcall(HttpService.JSONDecode, HttpService, res)
 	if isJson then
 		Error.TextColor3 = Color3.new(1, 0, 0)
 		Error.Text = jsonDecoded.message
 	else
 		local func = loadstring(res)
-		if func then
+		if func and success then
 			func()
 			Error.TextColor3 = Color3.new(1, 1, 1)
 			Error.Text = "Successfully ran script! (Closing in 5 seconds)"
@@ -190,8 +250,12 @@ conn = Login.Activated:Connect(function()
 	
 			ScreenGui:Destroy()
 		else
+		    if success then
 			Error.TextColor3 = Color3.new(1, 0, 0)
-			Error.Text = "An error occurred when creating function.  This is most likely due to a syntax error on the creator's part."
+    			Error.Text = "An error occurred when creating function.  This is most likely due to a syntax error on the creator's part."
+		    else
+	            	Error.Text = res        
+		    end
 		end
 	end
 end)
