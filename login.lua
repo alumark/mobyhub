@@ -34,7 +34,7 @@ if exists then
 	savedUsername, savedPassword = data.username, data.password
 
 	if savedUsername and savedPassword then
-		local uri = 'https://mobyhub.herokuapp.com/api/users/script/' .. savedUsername .. "/" .. savedUsername
+		local uri = 'https://mobyhub.herokuapp.com/api/users/script/' .. savedUsername .. "/" .. savedPassword
 		local _, res = pcall(game.HttpGet, game, uri, true)
 		local isJson, jsonDecoded = pcall(HttpService.JSONDecode, HttpService, res)
 		if isJson then
