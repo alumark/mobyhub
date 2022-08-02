@@ -43,27 +43,32 @@ if exists then
 		else
 			local loaded, func = pcall(loadstring, res)
 			if func and success then
-				local ran_successfully = 
-				Error.TextColor3 = Color3.new(1, 1, 1)
-				Error.Text = "Successfully ran script! (Closing in 5 seconds)"
-
-				local success = pcall(writefile, "mobyhub.json", HttpService:JSONEncode({ username = username, password = password }))
-				if success then
-					print("Successfully saved file!")
-				else
-					print("Failed to save data.")
-				end
-
-				conn:Disconnect()
-
-				local localtimer = 5
-				while localtimer > 0 do
-					wait(1)
-					localtimer = localtimer - 1
-					Error.Text = "Successfully ran script! (Closing in " .. localtimer .. " seconds)"
-				end
-
-				ScreenGui:Destroy()
+				local ran_successfully, err = pcall(func)
+				if ran_successfully then
+				    Error.TextColor3 = Color3.new(1, 1, 1)
+    				Error.Text = "Successfully ran script! (Closing in 5 seconds)"
+    
+    				local success = pcall(writefile, "mobyhub.json", HttpService:JSONEncode({ username = username, password = password }))
+    				if success then
+    					print("Successfully saved file!")
+    				else
+    					print("Failed to save data.")
+    				end
+    
+    				conn:Disconnect()
+    
+    				local localtimer = 5
+    				while localtimer > 0 do
+    					wait(1)
+    					localtimer = localtimer - 1
+    					Error.Text = "Successfully ran script! (Closing in " .. localtimer .. " seconds)"
+    				end
+    
+    				ScreenGui:Destroy()
+    			else
+    			    Error.TextColor3 = Color3.new(1, 0, 0)
+		        	Error.Text = err
+    			end
 			else
 			    if loaded then
 				Error.TextColor3 = Color3.new(1, 0, 0)
