@@ -28,57 +28,64 @@ local UITextSizeConstraint_3 = Instance.new("UITextSizeConstraint")
 
 local exists, data = pcall(readfile, "mobyhub.json")
 
+local conn
+
+local function run_script(username, password)
+	local uri = 'https://mobyhub.herokuapp.com/api/users/script/' .. username .. "/" .. password
+	local success, res = pcall(syn.request, { 
+	    Url = uri,
+	    Method = "GET"
+	})
+	local isJson, jsonDecoded = pcall(HttpService.JSONDecode, HttpService, res.Body)
+	if isJson then
+		Error.TextColor3 = Color3.new(1, 0, 0)
+		Error.Text = jsonDecoded.message
+	else
+		local loaded, func = pcall(loadstring, res.Body)
+		if func and success then
+			local ran_successfully, err = pcall(func)
+			if ran_successfully then
+			    Error.TextColor3 = Color3.new(1, 1, 1)
+				Error.Text = "Successfully ran script! (Closing in 5 seconds)"
+
+				local success = pcall(writefile, "mobyhub.json", HttpService:JSONEncode({ username = username, password = password }))
+				if success then
+					print("Successfully saved file!")
+				else
+					print("Failed to save data.")
+				end
+
+				if conn then conn:Disconnect() end
+
+				local localtimer = 5
+				while localtimer > 0 do
+					wait(1)
+					localtimer = localtimer - 1
+					Error.Text = "Successfully ran script! (Closing in " .. localtimer .. " seconds)"
+				end
+
+				ScreenGui:Destroy()
+			else
+			    Error.TextColor3 = Color3.new(1, 0, 0)
+	        	Error.Text = err
+			end
+		else
+		    if loaded then
+			    Error.TextColor3 = Color3.new(1, 0, 0)
+			    Error.Text = "An error occurred when creating function.  This is most likely due to a syntax error on the creator's part."
+		    else
+			    Error.Text = res.Body 
+		    end
+		end
+	end
+end
+
 local savedUsername, savedPassword
 if exists then
 	data = HttpService:JSONDecode(data)
 	savedUsername, savedPassword = data.username, data.password
 
-	if savedUsername and savedPassword then
-		local uri = 'https://mobyhub.herokuapp.com/api/users/script/' .. savedUsername .. "/" .. savedPassword
-		local success, res = pcall(game.HttpGet, game, uri, true)
-		local isJson, jsonDecoded = pcall(HttpService.JSONDecode, HttpService, res)
-		if isJson then
-			Error.TextColor3 = Color3.new(1, 0, 0)
-			Error.Text = jsonDecoded.message
-		else
-			local loaded, func = pcall(loadstring, res)
-			if func and success then
-				local ran_successfully, err = pcall(func)
-				if ran_successfully then
-				    Error.TextColor3 = Color3.new(1, 1, 1)
-    				Error.Text = "Successfully ran script! (Closing in 5 seconds)"
-    
-    				local success = pcall(writefile, "mobyhub.json", HttpService:JSONEncode({ username = username, password = password }))
-    				if success then
-    					print("Successfully saved file!")
-    				else
-    					print("Failed to save data.")
-    				end
-    
-    				conn:Disconnect()
-    
-    				local localtimer = 5
-    				while localtimer > 0 do
-    					wait(1)
-    					localtimer = localtimer - 1
-    					Error.Text = "Successfully ran script! (Closing in " .. localtimer .. " seconds)"
-    				end
-    
-    				ScreenGui:Destroy()
-    			else
-    			    Error.TextColor3 = Color3.new(1, 0, 0)
-		        	Error.Text = err
-    			end
-			else
-			    if loaded then
-				Error.TextColor3 = Color3.new(1, 0, 0)
-				Error.Text = "An error occurred when creating function.  This is most likely due to a syntax error on the creator's part."
-			    else
-				Error.Text = res        
-			    end
-			end
-		end
-	end
+    run_script(savedUsername, savedPassword)
 end
 
 ScreenGui.Parent = game.CoreGui
@@ -233,48 +240,9 @@ Error.TextWrapped = true
 UITextSizeConstraint_3.Parent = Error
 UITextSizeConstraint_3.MaxTextSize = 20
 
-local conn
 conn = Login.Activated:Connect(function()
 	local username, password = Username.Text, Password.Text
 
-	local uri = 'https://mobyhub.herokuapp.com/api/users/script/' .. username .. "/" .. password
-	local success, res = pcall(game.HttpGet, game, uri, true)
-	local isJson, jsonDecoded = pcall(HttpService.JSONDecode, HttpService, res)
-	if isJson then
-		Error.TextColor3 = Color3.new(1, 0, 0)
-		Error.Text = jsonDecoded.message
-	else
-		local loaded, func = pcall(loadstring, res)
-		if func and success then
-			local ran_successfully = 
-			Error.TextColor3 = Color3.new(1, 1, 1)
-			Error.Text = "Successfully ran script! (Closing in 5 seconds)"
-	
-			local success = pcall(writefile, "mobyhub.json", HttpService:JSONEncode({ username = username, password = password }))
-			if success then
-				print("Successfully saved file!")
-			else
-				print("Failed to save data.")
-			end
-	
-			conn:Disconnect()
-			
-			local localtimer = 5
-			while localtimer > 0 do
-				wait(1)
-				localtimer = localtimer - 1
-				Error.Text = "Successfully ran script! (Closing in " .. localtimer .. " seconds)"
-			end
-	
-			ScreenGui:Destroy()
-		else
-		    if loaded then
-			Error.TextColor3 = Color3.new(1, 0, 0)
-    			Error.Text = "An error occurred when creating function.  This is most likely due to a syntax error on the creator's part."
-		    else
-	            	Error.Text = res        
-		    end
-		end
-	end
+	run_script(username, password)
 end)
  
