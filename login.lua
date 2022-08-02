@@ -41,23 +41,36 @@ if exists then
 			Error.TextColor3 = Color3.new(1, 0, 0)
 			Error.Text = jsonDecoded.message
 		else
-			local success, func = pcall(loadstring, res)
-			if success and func then
-				func()
+			local loaded, func = pcall(loadstring, res)
+			if func and success then
+				local ran_successfully = 
 				Error.TextColor3 = Color3.new(1, 1, 1)
 				Error.Text = "Successfully ran script! (Closing in 5 seconds)"
-		
-				local success = pcall(writefile, "mobyhub.json", HttpService:JSONEncode({ username = savedUsername, password = savedPassword }))
+
+				local success = pcall(writefile, "mobyhub.json", HttpService:JSONEncode({ username = username, password = password }))
 				if success then
 					print("Successfully saved file!")
 				else
 					print("Failed to save data.")
 				end
-		
+
+				conn:Disconnect()
+
+				local localtimer = 5
+				while localtimer > 0 do
+					wait(1)
+					localtimer = localtimer - 1
+					Error.Text = "Successfully ran script! (Closing in " .. localtimer .. " seconds)"
+				end
+
 				ScreenGui:Destroy()
 			else
+			    if loaded then
 				Error.TextColor3 = Color3.new(1, 0, 0)
 				Error.Text = "An error occurred when creating function.  This is most likely due to a syntax error on the creator's part."
+			    else
+				Error.Text = res        
+			    end
 			end
 		end
 	end
