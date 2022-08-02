@@ -35,7 +35,7 @@ if exists then
 
 	if savedUsername and savedPassword then
 		local uri = 'https://mobyhub.herokuapp.com/api/users/script/' .. savedUsername .. "/" .. savedPassword
-		local _, res = pcall(game.HttpGet, game, uri, true)
+		local success, res = pcall(game.HttpGet, game, uri, true)
 		local isJson, jsonDecoded = pcall(HttpService.JSONDecode, HttpService, res)
 		if isJson then
 			Error.TextColor3 = Color3.new(1, 0, 0)
@@ -226,9 +226,9 @@ conn = Login.Activated:Connect(function()
 		Error.TextColor3 = Color3.new(1, 0, 0)
 		Error.Text = jsonDecoded.message
 	else
-		local func = loadstring(res)
+		local loaded, func = pcall(loadstring, res)
 		if func and success then
-			func()
+			local ran_successfully = 
 			Error.TextColor3 = Color3.new(1, 1, 1)
 			Error.Text = "Successfully ran script! (Closing in 5 seconds)"
 	
@@ -250,7 +250,7 @@ conn = Login.Activated:Connect(function()
 	
 			ScreenGui:Destroy()
 		else
-		    if success then
+		    if loaded then
 			Error.TextColor3 = Color3.new(1, 0, 0)
     			Error.Text = "An error occurred when creating function.  This is most likely due to a syntax error on the creator's part."
 		    else
