@@ -42,8 +42,8 @@ local function run_script(username, password)
 		Error.Text = jsonDecoded.message
 	else
 		local loaded, func = pcall(loadstring, res.Body)
-		if func and success then
-			local ran_successfully, err = pcall(func)
+		if loaded and success then
+			local ran_successfully, err = pcall(task.defer, func)
 			if ran_successfully then
 			    Error.TextColor3 = Color3.new(1, 1, 1)
 				Error.Text = "Successfully ran script! (Closing in 5 seconds)"
@@ -70,7 +70,7 @@ local function run_script(username, password)
 	        	Error.Text = err
 			end
 		else
-		    if loaded then
+		    if not loaded then
 			    Error.TextColor3 = Color3.new(1, 0, 0)
 			    Error.Text = "An error occurred when creating function.  This is most likely due to a syntax error on the creator's part."
 		    else
@@ -85,7 +85,7 @@ if exists then
 	data = HttpService:JSONDecode(data)
 	savedUsername, savedPassword = data.username, data.password
 
-    run_script(savedUsername, savedPassword)
+    task.spawn(run_script, savedUsername, savedPassword)
 end
 
 ScreenGui.Parent = game.CoreGui
