@@ -33,8 +33,8 @@ end
 
 local player = game.Players.LocalPlayer
 
-local Library = loadstring(game:HttpGet("https://raw.githubusercontent.com/alumark/mobyhub-dependencies/master/ui.lua", true))()
-local ESP = loadstring(game:HttpGet("https://raw.githubusercontent.com/alumark/mobyhub-dependencies/master/esp.lua", true))()
+local Library = loadstring(Xeno.HttpGet("https://raw.githubusercontent.com/alumark/mobyhub-dependencies/master/ui.lua", true))()
+local ESP = loadstring(Xeno.HttpGet("https://raw.githubusercontent.com/alumark/mobyhub-dependencies/master/esp.lua", true))()
 
 local GripOnOff = false
 local DupeOnOff = false
