@@ -20,8 +20,6 @@ until game:IsLoaded()
 local players = game:GetService("Players");
 local runService = game:GetService("RunService");
 
-local discordLink = game:HttpGet("https://mobyhub-pipeline.glitch.me/discord")
-
 print("mobyhub by alumark")
 
 function randomString()
